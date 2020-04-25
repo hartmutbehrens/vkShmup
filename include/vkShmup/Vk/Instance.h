@@ -15,6 +15,7 @@ namespace vkShmup {
         static bool checkValidationLayerSupport();
         static void create(VkInstance &instance, std::string name);
         static std::vector<VkExtensionProperties> extensions();
+        static std::vector<const char*> getRequiredExtensions();
 
     protected:
         Instance() = default;
