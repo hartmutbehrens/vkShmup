@@ -1,20 +1,50 @@
 //
 // Created by hartmut on 2020/04/25.
 //
+#include <cstring>
 #include <stdexcept>
 #include "vkShmup/Vk/Instance.h"
 
-namespace vkShmup {
+const std::vector<const char*> validationLayers = {
+        "VK_LAYER_KHRONOS_validation"
+};
 
-    std::vector<VkExtensionProperties> Instance:: extensions() {
-        uint32_t extensionCount = 0;
-        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-        static std::vector<VkExtensionProperties> ext(extensionCount);
-        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, ext.data());
-        return ext;
+#ifdef NDEBUG
+const bool enableValidationLayers = false;
+#else
+const bool enableValidationLayers = true;
+#endif
+
+namespace vkShmup {
+    bool Instance::checkValidationLayerSupport() {
+        uint32_t layerCount;
+        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+        std::vector<VkLayerProperties> availableLayers(layerCount);
+        vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+        for (const char* layerName : validationLayers) {
+            bool layerFound = false;
+
+            for (const auto& layerProperties : availableLayers) {
+                if (strcmp(layerName, layerProperties.layerName) == 0) {
+                    layerFound = true;
+                    break;
+                }
+            }
+
+            if (!layerFound) {
+                return false;
+            }
+        }
+        return true;
     }
 
     void Instance::create(VkInstance &instance, std::string name) {
+        if (enableValidationLayers && !checkValidationLayerSupport()) {
+            throw std::runtime_error("Validation layers requested, but not available!");
+        }
+
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         appInfo.pApplicationName = name.c_str();
@@ -38,6 +68,14 @@ namespace vkShmup {
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create a Vulkan instance!");
         }
+    }
+
+    std::vector<VkExtensionProperties> Instance:: extensions() {
+        uint32_t extensionCount = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+        static std::vector<VkExtensionProperties> ext(extensionCount);
+        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, ext.data());
+        return ext;
     }
 
 }

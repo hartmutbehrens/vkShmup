@@ -30,5 +30,5 @@ target_include_directories(Core PUBLIC
 include_directories(include)
 add_executable(vkShmup
         src/main.cpp)
-link_directories(${VULKAN_SDK+PATH}/include)
+link_directories(${VULKAN_SDK_PATH}/include)
 target_link_libraries(vkShmup Core Vk glfw vulkan)
