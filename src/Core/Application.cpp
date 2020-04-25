@@ -1,8 +1,6 @@
 //
 // Created by hartmut on 2020/04/25.
 //
-#include <iostream>
-#include <vector>
 #include "vkShmup/Core/Application.h"
 #include "vkShmup/Vk/Instance.h"
 
