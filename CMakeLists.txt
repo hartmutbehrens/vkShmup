@@ -12,7 +12,13 @@ else()
     add_compile_options(-Wall)
 endif()
 
-set(VULKAN_SDK_PATH "/home/hartmut/projects/vulkan-sdk/1.2.135.0/x86_64" CACHE STRING "Path to Vulkan SDK x86_64 directory")
+# check for VULKAN_SDK_PATH path variable or set a default..
+set(VULKAN_SDK_PATH "../vulkan-sdk/1.2.135.0/x86_64" CACHE STRING "Path to Vulkan SDK x86_64 directory")
+if(NOT EXISTS ${VULKAN_SDK_PATH})
+    message("VULKAN_SDK_PATH = ${VULKAN_SDK_PATH} does not exist")
+endif()
+
+
 find_package(glfw3 3.3 REQUIRED)
 
 add_executable(vkShmup src/main.cpp)
