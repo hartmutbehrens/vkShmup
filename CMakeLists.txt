@@ -17,5 +17,4 @@ find_package(glfw3 3.3 REQUIRED)
 
 add_executable(vkShmup src/main.cpp)
 link_directories(${VULKAN_SDK+PATH}/include)
-
 target_link_libraries(vkShmup glfw vulkan)
