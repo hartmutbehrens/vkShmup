@@ -21,13 +21,17 @@ public:
     }
 
 private:
+    // nested class
+    struct GLFWwindowDestroyer {
+        void operator()(GLFWwindow* w) { glfwDestroyWindow(w); }
+    };
     // methods
     void initWindow() {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // don't create an OpenGL context
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        window = glfwCreateWindow(WIDTH, HEIGHT, "vkShmup", nullptr, nullptr);
+        window = std::unique_ptr<GLFWwindow, GLFWwindowDestroyer>(glfwCreateWindow(WIDTH, HEIGHT, "vkShmup", nullptr, nullptr));
     }
 
     void initVulkan() {
@@ -35,17 +39,16 @@ private:
     }
 
     void mainLoop() {
-        while (!glfwWindowShouldClose(window)) {
+        while (!glfwWindowShouldClose(window.get())) {
             glfwPollEvents();
         }
     }
 
     void cleanup() {
-        glfwDestroyWindow(window);
         glfwTerminate();
     }
     // members
-    GLFWwindow *window;
+    std::unique_ptr<GLFWwindow, GLFWwindowDestroyer> window;
 };
 
 int main() {
