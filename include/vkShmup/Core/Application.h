@@ -28,11 +28,13 @@ namespace vkShmup {
         void initVulkan();
         void mainLoop();
         void cleanup();
+        void setupDebugMessenger();
 
         // members
         std::string name;
         std::unique_ptr<GLFWwindow, GLFWwindowDestroyer> window;
         VkInstance instance;
+        VkDebugUtilsMessengerEXT debugMessenger;
     };
 }
 

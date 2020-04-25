@@ -34,6 +34,7 @@ namespace vkShmup {
 
     void Application::initVulkan() {
         vkShmup::Instance::create(instance, name);
+        vkShmup::Instance::setupDebugMessenger(instance, debugMessenger);
     }
 
     void Application::mainLoop() {
@@ -43,6 +44,7 @@ namespace vkShmup {
     }
 
     void Application::cleanup() {
+        Instance::DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
         vkDestroyInstance(instance, nullptr);
         glfwTerminate();
     }
