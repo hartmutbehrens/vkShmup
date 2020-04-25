@@ -27,6 +27,7 @@ namespace vkShmup {
 
         // members
         std::unique_ptr<GLFWwindow, GLFWwindowDestroyer> window;
+        VkInstance instance;
     };
 }
 

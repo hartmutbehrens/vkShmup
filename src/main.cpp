@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
-#include "vkShmup/Application.h"
+#include "vkShmup/Core/Application.h"
 
 int main() {
     vkShmup::Application app;
