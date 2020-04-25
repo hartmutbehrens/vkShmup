@@ -1,58 +1,10 @@
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
 #include <iostream>
-#include <memory>
 #include <stdexcept>
 #include <cstdlib>
-
-const uint32_t WIDTH = 800;
-const uint32_t HEIGHT = 600;
-
-
-class vkShmupApplication {
-public:
-
-    void run() {
-        initWindow();
-        initVulkan();
-        mainLoop();
-        cleanup();
-    }
-
-private:
-    // nested class
-    struct GLFWwindowDestroyer {
-        void operator()(GLFWwindow* w) { glfwDestroyWindow(w); }
-    };
-    // methods
-    void initWindow() {
-        glfwInit();
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // don't create an OpenGL context
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-        window = std::unique_ptr<GLFWwindow, GLFWwindowDestroyer>(glfwCreateWindow(WIDTH, HEIGHT, "vkShmup", nullptr, nullptr));
-    }
-
-    void initVulkan() {
-
-    }
-
-    void mainLoop() {
-        while (!glfwWindowShouldClose(window.get())) {
-            glfwPollEvents();
-        }
-    }
-
-    void cleanup() {
-        glfwTerminate();
-    }
-    // members
-    std::unique_ptr<GLFWwindow, GLFWwindowDestroyer> window;
-};
+#include "vkShmup/Application.h"
 
 int main() {
-    vkShmupApplication app;
+    vkShmup::Application app;
 
     try {
         app.run();
