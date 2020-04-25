@@ -8,8 +8,8 @@ if (MSVC)
     add_compile_options(/W4 /WX)
 else()
     # lots of warnings and all warnings as errors
-    # add_compile_options(-Wall -Wextra -pedantic -Werror)
-    add_compile_options(-Wall)
+    add_compile_options(-Wall -Wextra -pedantic -Werror)
+    # add_compile_options(-Wall)
 endif()
 
 # check for VULKAN_SDK_PATH path variable or set a default..
@@ -21,6 +21,8 @@ endif()
 find_package(glfw3 3.3 REQUIRED)
 add_library(Core
         src/Core/Application.cpp)
+add_library(Vk
+        src/Vk/Instance.cpp)
 target_include_directories(Core PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
@@ -29,4 +31,4 @@ include_directories(include)
 add_executable(vkShmup
         src/main.cpp)
 link_directories(${VULKAN_SDK+PATH}/include)
-target_link_libraries(vkShmup Core glfw vulkan)
+target_link_libraries(vkShmup Core Vk glfw vulkan)

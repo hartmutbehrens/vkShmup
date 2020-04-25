@@ -7,10 +7,14 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <memory>
+#include <string>
 
 namespace vkShmup {
     class Application {
     public:
+        Application();
+        Application(std::string name);
+        ~Application() = default;
         void run();
 
     private:
@@ -26,6 +30,7 @@ namespace vkShmup {
         void cleanup();
 
         // members
+        std::string name;
         std::unique_ptr<GLFWwindow, GLFWwindowDestroyer> window;
         VkInstance instance;
     };

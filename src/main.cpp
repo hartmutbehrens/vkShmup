@@ -4,7 +4,7 @@
 #include "vkShmup/Core/Application.h"
 
 int main() {
-    vkShmup::Application app;
+    vkShmup::Application app{"vkShmup"};
 
     try {
         app.run();
