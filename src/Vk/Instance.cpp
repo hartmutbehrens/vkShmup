@@ -12,6 +12,11 @@ const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
 };
 
+const std::vector<const char*> deviceExtensions = {
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
+
+
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
@@ -190,16 +195,28 @@ namespace vkShmup {
         }
     }
 
-    bool Instance::isDeviceSuitable(VkPhysicalDevice device) {
-        VkPhysicalDeviceProperties deviceProperties;
-        vkGetPhysicalDeviceProperties(device, &deviceProperties);
+    bool Instance::checkDeviceExtensionSupport(VkPhysicalDevice device) {
+        uint32_t extensionCount;
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
-        VkPhysicalDeviceFeatures deviceFeatures;
-        vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+        std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+        std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
+
+        for (const auto& extension : availableExtensions) {
+            requiredExtensions.erase(extension.extensionName);
+        }
+
+        return requiredExtensions.empty();
+    }
+
+    bool Instance::isDeviceSuitable(VkPhysicalDevice device) {
         QueueFamilyIndices indices = findQueueFamilies(device);
-        return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
-               deviceFeatures.geometryShader &&
-               indices.isComplete();
+
+        bool extensionsSupported = checkDeviceExtensionSupport(device);
+
+        return indices.isComplete() && extensionsSupported;
     }
 
     VKAPI_ATTR VkBool32 VKAPI_CALL Instance::debugCallback(
@@ -241,14 +258,6 @@ namespace vkShmup {
         if (func != nullptr) {
             func(instance, debugMessenger, pAllocator);
         }
-    }
-
-    std::vector<VkExtensionProperties> Instance::extensions() {
-        uint32_t extensionCount = 0;
-        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-        static std::vector<VkExtensionProperties> ext(extensionCount);
-        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, ext.data());
-        return ext;
     }
 
     Instance::QueueFamilyIndices Instance::findQueueFamilies(VkPhysicalDevice device) {
