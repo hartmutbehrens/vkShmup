@@ -2,10 +2,8 @@
 // Created by hartmut on 2020/04/25.
 //
 #include "vkShmup/Core/Application.h"
+#include "vkShmup/Core/Window.h"
 #include "vkShmup/Vk/Instance.h"
-
-const uint32_t WIDTH = 800;
-const uint32_t HEIGHT = 600;
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -35,7 +33,7 @@ namespace vkShmup {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // don't create an OpenGL context
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        window = std::unique_ptr<GLFWwindow, GLFWwindowDestroyer>(glfwCreateWindow(WIDTH, HEIGHT, name.c_str(), nullptr, nullptr));
+        window = Window::create(name);
     }
 
     void Application::initVulkan() {
@@ -46,7 +44,7 @@ namespace vkShmup {
     }
 
     void Application::mainLoop() {
-        while (!glfwWindowShouldClose(window.get())) {
+        while (!glfwWindowShouldClose(window->window())) {
             glfwPollEvents();
         }
     }

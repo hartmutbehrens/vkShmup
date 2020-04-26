@@ -20,7 +20,8 @@ endif()
 
 find_package(glfw3 3.3 REQUIRED)
 add_library(Core
-        src/Core/Application.cpp)
+        src/Core/Application.cpp
+        src/Core/Window.cpp)
 add_library(Vk
         src/Vk/Instance.cpp)
 target_include_directories(Core PUBLIC
