@@ -65,7 +65,7 @@ namespace vkShmup {
     }
 
     std::unique_ptr<Instance> Instance::create(std::string name) {
-        return std::unique_ptr<Instance>(new Instance(name));
+        return std::unique_ptr<Instance>(new Instance(std::move(name)));
     }
 
     VkInstance* Instance::instanceHandle() {

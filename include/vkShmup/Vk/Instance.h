@@ -44,7 +44,7 @@ namespace vkShmup {
 
     private:
         void createInstance(std::string name = {"application"});
-        bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+        static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         bool isDeviceSuitable(VkPhysicalDevice device);
         static std::vector<const char*> getRequiredExtensions();
         static bool checkValidationLayerSupport();
