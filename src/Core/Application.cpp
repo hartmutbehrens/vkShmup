@@ -7,6 +7,12 @@
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
+#ifdef NDEBUG
+const bool enableValidationLayers = false;
+#else
+const bool enableValidationLayers = true;
+#endif
+
 namespace vkShmup {
 
     Application::Application(): name("application") {
@@ -34,7 +40,9 @@ namespace vkShmup {
 
     void Application::initVulkan() {
         vkShmup::Instance::create(instance, name);
-        vkShmup::Instance::setupDebugMessenger(instance, debugMessenger);
+        if (enableValidationLayers) {
+            vkShmup::Instance::setupDebugMessenger(instance, debugMessenger);
+        }
     }
 
     void Application::mainLoop() {
@@ -44,7 +52,9 @@ namespace vkShmup {
     }
 
     void Application::cleanup() {
-        Instance::DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+        if (enableValidationLayers) {
+            Instance::DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+        }
         vkDestroyInstance(instance, nullptr);
         glfwTerminate();
     }
