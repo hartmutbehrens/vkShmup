@@ -16,6 +16,7 @@ namespace vkShmup {
     public:
         using unique_ptr = std::unique_ptr<Instance>;
         static unique_ptr create(std::string name);
+        void initialize(GLFWwindow* window);
         VkInstance* instanceHandle();
         VkPhysicalDevice* deviceHandle();
         void pickPhysicalDevice();
@@ -78,6 +79,9 @@ namespace vkShmup {
         VkQueue presentQueue;
 
         VkSwapchainKHR swapChain;
+        std::vector<VkImage> swapChainImages;
+        VkFormat swapChainImageFormat;
+        VkExtent2D swapChainExtent;
     };
 }
 

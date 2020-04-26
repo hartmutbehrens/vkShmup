@@ -73,6 +73,13 @@ namespace vkShmup {
         return std::unique_ptr<Instance>(new Instance(std::move(name)));
     }
 
+    void Instance::initialize(GLFWwindow *window) {
+        createSurface(window);
+        pickPhysicalDevice();
+        createLogicalDevice();
+        createSwapChain();
+    }
+
     VkInstance* Instance::instanceHandle() {
         return &instance;
     }
@@ -237,7 +244,11 @@ namespace vkShmup {
         if (vkCreateSwapchainKHR(logcalDevice, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
             throw std::runtime_error("failed to create swap chain!");
         }
-
+        vkGetSwapchainImagesKHR(logcalDevice, swapChain, &imageCount, nullptr);
+        swapChainImages.resize(imageCount);
+        vkGetSwapchainImagesKHR(logcalDevice, swapChain, &imageCount, swapChainImages.data());
+        swapChainImageFormat = surfaceFormat.format;
+        swapChainExtent = extent;
     }
 
     bool Instance::checkDeviceExtensionSupport(VkPhysicalDevice device) {
