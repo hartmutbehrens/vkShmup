@@ -25,9 +25,10 @@ namespace vkShmup {
 
         struct QueueFamilyIndices {
             std::optional<uint32_t> graphicsFamily;
+            std::optional<uint32_t> presentFamily;
 
             bool isComplete() {
-                return graphicsFamily.has_value();
+                return graphicsFamily.has_value() && presentFamily.has_value();
             }
         };
 
@@ -39,7 +40,7 @@ namespace vkShmup {
     private:
         void createInstance(std::string name = {"application"});
 
-        static bool isDeviceSuitable(VkPhysicalDevice device);
+        bool isDeviceSuitable(VkPhysicalDevice device);
         static std::vector<const char*> getRequiredExtensions();
         static bool checkValidationLayerSupport();
 
@@ -54,7 +55,7 @@ namespace vkShmup {
                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                 void* pUserData);
         static std::vector<VkExtensionProperties> extensions();
-        static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
         // members
 
         VkInstance instance;
