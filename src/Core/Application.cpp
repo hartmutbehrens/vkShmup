@@ -34,6 +34,7 @@ namespace vkShmup {
 
     void Application::initVulkan() {
         instance = Instance::create(name);
+        instance->createSurface(window->handle());
         instance->pickPhysicalDevice();
         instance->createLogicalDevice();
     }

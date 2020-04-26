@@ -62,6 +62,7 @@ namespace vkShmup {
             DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
         }
         vkDestroyDevice(logcalDevice, nullptr);
+        vkDestroySurfaceKHR(instance, surface, nullptr);
         vkDestroyInstance(instance, nullptr);
     }
 
@@ -124,7 +125,6 @@ namespace vkShmup {
     }
 
     void Instance::pickPhysicalDevice() {
-        physicalDevice = VK_NULL_HANDLE;
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
         if (deviceCount == 0) {
@@ -174,6 +174,12 @@ namespace vkShmup {
             throw std::runtime_error("Failed to create logical device!");
         }
         vkGetDeviceQueue(logcalDevice, indices.graphicsFamily.value(), 0, &graphicsQueue);
+    }
+
+    void Instance::createSurface(GLFWwindow* window) {
+        if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create window surface!");
+        }
     }
 
     bool Instance::isDeviceSuitable(VkPhysicalDevice device) {
