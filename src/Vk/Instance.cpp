@@ -32,21 +32,13 @@ namespace vkShmup {
         std::vector<VkLayerProperties> availableLayers(layerCount);
         vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-        for (const char* layerName : validationLayers) {
-            bool layerFound = false;
+        std::set<std::string> requiredLayers(validationLayers.begin(), validationLayers.end());
 
-            for (const auto& layerProperties : availableLayers) {
-                if (strcmp(layerName, layerProperties.layerName) == 0) {
-                    layerFound = true;
-                    break;
-                }
-            }
-
-            if (!layerFound) {
-                return false;
-            }
+        for (const auto& layerProperties : availableLayers) {
+            requiredLayers.erase(layerProperties.layerName);
         }
-        return true;
+
+        return requiredLayers.empty();
     }
 
     Instance::Instance() {
