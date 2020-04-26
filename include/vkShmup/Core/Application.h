@@ -4,9 +4,9 @@
 
 #ifndef VKSHMUP_APPLICATION_H
 #define VKSHMUP_APPLICATION_H
-#include <memory>
 #include <string>
 #include "vkShmup/Core/Window.h"
+#include "vkShmup/Vk/Instance.h"
 
 namespace vkShmup {
     class Application {
@@ -26,9 +26,8 @@ namespace vkShmup {
         // members
         std::string name;
         vkShmup::Window::unique_ptr window;
-        VkInstance instance;
-        VkPhysicalDevice physicalDevice;
-        VkDebugUtilsMessengerEXT debugMessenger;
+        vkShmup::Instance::unique_ptr instance;
+
     };
 }
 

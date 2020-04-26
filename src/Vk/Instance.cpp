@@ -42,7 +42,40 @@ namespace vkShmup {
         return true;
     }
 
-    void Instance::create(VkInstance &instance, std::string name) {
+    Instance::Instance() {
+        createInstance();
+        if (enableValidationLayers) {
+            setupDebugMessenger();
+        }
+    }
+
+    Instance::Instance(std::string name) {
+        createInstance(name);
+        if (enableValidationLayers) {
+            setupDebugMessenger();
+        }
+    }
+
+    Instance::~Instance() {
+        if (enableValidationLayers) {
+            DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+        }
+        vkDestroyInstance(instance, nullptr);
+    }
+
+    std::unique_ptr<Instance> Instance::create(std::string name) {
+        return std::unique_ptr<Instance>(new Instance(name));
+    }
+
+    VkInstance* Instance::instanceHandle() {
+        return &instance;
+    }
+
+    VkPhysicalDevice * Instance::deviceHandle() {
+        return &physicalDevice;
+    }
+
+    void Instance::createInstance(std::string name) {
         if (enableValidationLayers && !checkValidationLayerSupport()) {
             throw std::runtime_error("Validation layers requested, but not available!");
         }
@@ -71,6 +104,7 @@ namespace vkShmup {
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create a Vulkan instance!");
         }
+
     }
 
     std::vector<VkExtensionProperties> Instance::extensions() {
@@ -95,8 +129,8 @@ namespace vkShmup {
         return extensions;
     }
 
-    void Instance::pickPhysicalDevice(VkInstance& instance, VkPhysicalDevice &device) {
-        device = VK_NULL_HANDLE;
+    void Instance::pickPhysicalDevice() {
+        physicalDevice = VK_NULL_HANDLE;
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
         if (deviceCount == 0) {
@@ -106,12 +140,12 @@ namespace vkShmup {
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
         for (const auto& d : devices) {
             if (isDeviceSuitable(d)) {
-                device = d;
+                physicalDevice = d;
                 break;
             }
         }
 
-        if (device == VK_NULL_HANDLE) {
+        if (physicalDevice == VK_NULL_HANDLE) {
             throw std::runtime_error("Failed to find a suitable GPU!");
         }
     }
@@ -137,7 +171,7 @@ namespace vkShmup {
         return VK_FALSE;
     }
 
-    void Instance::setupDebugMessenger(VkInstance &instance, VkDebugUtilsMessengerEXT &debugMessenger) {
+    void Instance::setupDebugMessenger() {
         VkDebugUtilsMessengerCreateInfoEXT createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
         createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;

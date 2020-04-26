@@ -5,12 +5,6 @@
 #include "vkShmup/Core/Window.h"
 #include "vkShmup/Vk/Instance.h"
 
-#ifdef NDEBUG
-const bool enableValidationLayers = false;
-#else
-const bool enableValidationLayers = true;
-#endif
-
 namespace vkShmup {
 
     Application::Application(): name("application") {
@@ -37,11 +31,8 @@ namespace vkShmup {
     }
 
     void Application::initVulkan() {
-        vkShmup::Instance::create(instance, name);
-        if (enableValidationLayers) {
-            vkShmup::Instance::setupDebugMessenger(instance, debugMessenger);
-        }
-        Instance::pickPhysicalDevice(instance, physicalDevice);
+        instance = Instance::create(name);
+        instance->pickPhysicalDevice();
     }
 
     void Application::mainLoop() {
@@ -51,10 +42,6 @@ namespace vkShmup {
     }
 
     void Application::cleanup() {
-        if (enableValidationLayers) {
-            Instance::DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-        }
-        vkDestroyInstance(instance, nullptr);
         glfwTerminate();
     }
 
