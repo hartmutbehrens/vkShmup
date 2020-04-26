@@ -44,7 +44,7 @@ namespace vkShmup {
     }
 
     void Application::mainLoop() {
-        while (!glfwWindowShouldClose(window->window())) {
+        while (!glfwWindowShouldClose(window->handle())) {
             glfwPollEvents();
         }
     }

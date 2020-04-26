@@ -8,8 +8,12 @@ const uint32_t HEIGHT = 600;
 
 namespace vkShmup {
 
-    GLFWwindow * Window::window() const {
+    GLFWwindow * Window::handle() const {
         return w;
+    }
+
+    Window::unique_ptr Window::create(std::string name) {
+        return std::unique_ptr<Window, GLFWwindowDestroyer>(new Window(name), GLFWwindowDestroyer());
     }
 
     Window::Window(): name{"application"} {
