@@ -24,6 +24,7 @@ namespace vkShmup {
         void createLogicalDevice();
         void createSurface(GLFWwindow* window);
         void createSwapChain(VkExtent2D actualExtent);
+        void createImageViews();
         ~Instance();
 
         struct QueueFamilyIndices {
@@ -83,6 +84,7 @@ namespace vkShmup {
         std::vector<VkImage> swapChainImages;
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;
+        std::vector<VkImageView> swapChainImageViews;
     };
 }
 
