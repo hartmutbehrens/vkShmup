@@ -21,6 +21,7 @@ namespace vkShmup {
         void pickPhysicalDevice();
         void createLogicalDevice();
         void createSurface(GLFWwindow* window);
+        void createSwapChain();
         ~Instance();
 
         struct QueueFamilyIndices {
@@ -61,6 +62,9 @@ namespace vkShmup {
                 void* pUserData);
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+        VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+        VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+        VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
         // members
 
         VkInstance instance;
@@ -72,6 +76,8 @@ namespace vkShmup {
 
         VkQueue graphicsQueue;
         VkQueue presentQueue;
+
+        VkSwapchainKHR swapChain;
     };
 }
 

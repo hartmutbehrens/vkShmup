@@ -37,6 +37,7 @@ namespace vkShmup {
         instance->createSurface(window->handle());
         instance->pickPhysicalDevice();
         instance->createLogicalDevice();
+        instance->createSwapChain();
     }
 
     void Application::mainLoop() {
