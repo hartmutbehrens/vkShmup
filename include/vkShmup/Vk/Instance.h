@@ -19,6 +19,7 @@ namespace vkShmup {
         VkInstance* instanceHandle();
         VkPhysicalDevice* deviceHandle();
         void pickPhysicalDevice();
+        void createLogicalDevice();
         ~Instance();
 
         struct QueueFamilyIndices {
@@ -54,9 +55,11 @@ namespace vkShmup {
         static std::vector<VkExtensionProperties> extensions();
         static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
         // members
+        VkDevice logcalDevice;
+        VkDebugUtilsMessengerEXT debugMessenger;
         VkInstance instance;
         VkPhysicalDevice physicalDevice;
-        VkDebugUtilsMessengerEXT debugMessenger;
+        VkQueue graphicsQueue;
     };
 }
 
