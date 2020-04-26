@@ -41,6 +41,7 @@ namespace vkShmup {
         if (enableValidationLayers) {
             vkShmup::Instance::setupDebugMessenger(instance, debugMessenger);
         }
+        Instance::pickPhysicalDevice(instance, physicalDevice);
     }
 
     void Application::mainLoop() {

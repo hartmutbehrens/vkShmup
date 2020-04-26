@@ -13,9 +13,10 @@ namespace vkShmup {
     class Instance {
     public:
         static bool checkValidationLayerSupport();
-        static void create(VkInstance &instance, std::string name);
+        static void create(VkInstance& instance, std::string name);
         static std::vector<VkExtensionProperties> extensions();
         static std::vector<const char*> getRequiredExtensions();
+        static void pickPhysicalDevice(VkInstance& instance, VkPhysicalDevice& device);
         static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
                 VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                 VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -29,6 +30,9 @@ namespace vkShmup {
 
     protected:
         Instance() = default;
+
+    private:
+        static bool isDeviceSuitable(VkPhysicalDevice device);
     };
 }
 

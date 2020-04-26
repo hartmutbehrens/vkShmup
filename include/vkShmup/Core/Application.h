@@ -27,6 +27,7 @@ namespace vkShmup {
         std::string name;
         vkShmup::Window::unique_ptr window;
         VkInstance instance;
+        VkPhysicalDevice physicalDevice;
         VkDebugUtilsMessengerEXT debugMessenger;
     };
 }
