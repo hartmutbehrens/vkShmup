@@ -26,12 +26,13 @@ namespace vkShmup {
 
     private:
         void createInstance(std::string name = {"application"});
-        void setupDebugMessenger();
-
-
         static bool isDeviceSuitable(VkPhysicalDevice device);
         static std::vector<const char*> getRequiredExtensions();
         static bool checkValidationLayerSupport();
+
+        template <typename T>
+        void setupDebugMessenger(T callback);
+
         static VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
         static void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
         static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
