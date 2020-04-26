@@ -16,12 +16,12 @@ namespace vkShmup {
         return std::unique_ptr<Window, GLFWwindowDestroyer>(new Window(name), GLFWwindowDestroyer());
     }
 
-    Window::Window(): name{"application"} {
-        w = glfwCreateWindow(WIDTH, HEIGHT, name.c_str(), nullptr, nullptr);
+    Window::Window(): name{"application"}, width{WIDTH}, height{HEIGHT} {
+        w = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
     }
 
-    Window::Window(std::string name): name{name} {
-        w = glfwCreateWindow(WIDTH, HEIGHT, name.c_str(), nullptr, nullptr);
+    Window::Window(std::string name): name{name}, width{WIDTH}, height{HEIGHT} {
+        w = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
     }
 
     Window::~Window() {
