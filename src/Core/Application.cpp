@@ -2,8 +2,6 @@
 // Created by hartmut on 2020/04/25.
 //
 #include "vkShmup/Core/Application.h"
-
-#include <utility>
 #include "vkShmup/Core/Window.h"
 #include "vkShmup/Vk/Pipeline.h"
 
@@ -33,7 +31,7 @@ namespace vkShmup {
     }
 
     void Application::initVulkan() {
-        pipeline = Pipeline::create(name);
+        pipeline = Pipeline::create(name.c_str());
         pipeline->initVulkan(window.get());
     }
 

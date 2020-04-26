@@ -8,7 +8,6 @@
 #include <GLFW/glfw3.h>
 #include <memory>
 #include <optional>     // C++17
-#include <string>
 #include <vector>
 
 namespace vkShmup {
@@ -16,7 +15,7 @@ namespace vkShmup {
     class Pipeline {
     public:
         using unique_ptr = std::unique_ptr<Pipeline>;
-        static unique_ptr create(std::string name);
+        static unique_ptr create(const char* name);
         void initVulkan(Window* window);
         VkInstance* instanceHandle();
         VkPhysicalDevice* deviceHandle();
@@ -45,10 +44,10 @@ namespace vkShmup {
 
     protected:
         Pipeline();
-        explicit Pipeline(std::string name);
+        explicit Pipeline(const char* name);
 
     private:
-        void createInstance(std::string name = {"application"});
+        void createInstance(const char* name);
         static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         bool isDeviceSuitable(VkPhysicalDevice device);
         static std::vector<const char*> getRequiredExtensions();

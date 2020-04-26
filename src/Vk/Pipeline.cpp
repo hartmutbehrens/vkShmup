@@ -43,14 +43,14 @@ namespace vkShmup {
     }
 
     Pipeline::Pipeline() {
-        createInstance();
+        createInstance("application");
         if (enableValidationLayers) {
             setupDebugMessenger(debugCallback);
         }
     }
 
-    Pipeline::Pipeline(std::string name) {
-        createInstance(std::move(name));
+    Pipeline::Pipeline(const char* name) {
+        createInstance(name);
         if (enableValidationLayers) {
             setupDebugMessenger(debugCallback);
         }
@@ -70,8 +70,8 @@ namespace vkShmup {
         vkDestroyInstance(instance, nullptr);
     }
 
-    std::unique_ptr<Pipeline> Pipeline::create(std::string name) {
-        return std::unique_ptr<Pipeline>(new Pipeline(std::move(name)));
+    std::unique_ptr<Pipeline> Pipeline::create(const char* name) {
+        return std::unique_ptr<Pipeline>(new Pipeline(name));
     }
 
     void Pipeline::initVulkan(Window *window) {
@@ -90,14 +90,14 @@ namespace vkShmup {
         return &physicalDevice;
     }
 
-    void Pipeline::createInstance(std::string name) {
+    void Pipeline::createInstance(const char* name) {
         if (enableValidationLayers && !checkValidationLayerSupport()) {
             throw std::runtime_error("Validation layers requested, but not available!");
         }
 
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        appInfo.pApplicationName = name.c_str();
+        appInfo.pApplicationName = name;
         appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.pEngineName = "No Engine";
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
