@@ -2,8 +2,8 @@
 // Created by hartmut on 2020/04/25.
 //
 
-#ifndef VKSHMUP_INSTANCE_H
-#define VKSHMUP_INSTANCE_H
+#ifndef VKSHMUP_PIPELINE_H
+#define VKSHMUP_PIPELINE_H
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <memory>
@@ -13,9 +13,9 @@
 
 namespace vkShmup {
     class Window;
-    class Instance {
+    class Pipeline {
     public:
-        using unique_ptr = std::unique_ptr<Instance>;
+        using unique_ptr = std::unique_ptr<Pipeline>;
         static unique_ptr create(std::string name);
         void initVulkan(Window* window);
         VkInstance* instanceHandle();
@@ -25,7 +25,8 @@ namespace vkShmup {
         void createSurface(GLFWwindow* window);
         void createSwapChain(VkExtent2D actualExtent);
         void createImageViews();
-        ~Instance();
+        void createGraphicsPipeline();
+        ~Pipeline();
 
         struct QueueFamilyIndices {
             std::optional<uint32_t> graphicsFamily;
@@ -43,8 +44,8 @@ namespace vkShmup {
         };
 
     protected:
-        Instance();
-        explicit Instance(std::string name);
+        Pipeline();
+        explicit Pipeline(std::string name);
 
     private:
         void createInstance(std::string name = {"application"});
@@ -88,4 +89,4 @@ namespace vkShmup {
     };
 }
 
-#endif //VKSHMUP_INSTANCE_H
+#endif //VKSHMUP_PIPELINE_H

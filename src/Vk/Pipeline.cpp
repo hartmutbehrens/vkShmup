@@ -6,7 +6,7 @@
 #include <set>
 #include <stdexcept>
 #include <utility>
-#include "vkShmup/Vk/Instance.h"
+#include "vkShmup/Vk/Pipeline.h"
 #include "vkShmup/Core/Window.h"
 
 const std::vector<const char*> validationLayers = {
@@ -26,7 +26,7 @@ const bool enableValidationLayers = true;
 
 
 namespace vkShmup {
-    bool Instance::checkValidationLayerSupport() {
+    bool Pipeline::checkValidationLayerSupport() {
         uint32_t layerCount;
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
@@ -42,21 +42,21 @@ namespace vkShmup {
         return requiredLayers.empty();
     }
 
-    Instance::Instance() {
+    Pipeline::Pipeline() {
         createInstance();
         if (enableValidationLayers) {
             setupDebugMessenger(debugCallback);
         }
     }
 
-    Instance::Instance(std::string name) {
+    Pipeline::Pipeline(std::string name) {
         createInstance(std::move(name));
         if (enableValidationLayers) {
             setupDebugMessenger(debugCallback);
         }
     }
 
-    Instance::~Instance() {
+    Pipeline::~Pipeline() {
         for (auto imageView : swapChainImageViews) {
             vkDestroyImageView(logcalDevice, imageView, nullptr);
         }
@@ -70,11 +70,11 @@ namespace vkShmup {
         vkDestroyInstance(instance, nullptr);
     }
 
-    std::unique_ptr<Instance> Instance::create(std::string name) {
-        return std::unique_ptr<Instance>(new Instance(std::move(name)));
+    std::unique_ptr<Pipeline> Pipeline::create(std::string name) {
+        return std::unique_ptr<Pipeline>(new Pipeline(std::move(name)));
     }
 
-    void Instance::initVulkan(Window *window) {
+    void Pipeline::initVulkan(Window *window) {
         createSurface(window->handle());
         pickPhysicalDevice();
         createLogicalDevice();
@@ -82,15 +82,15 @@ namespace vkShmup {
         createImageViews();
     }
 
-    VkInstance* Instance::instanceHandle() {
+    VkInstance* Pipeline::instanceHandle() {
         return &instance;
     }
 
-    VkPhysicalDevice * Instance::deviceHandle() {
+    VkPhysicalDevice * Pipeline::deviceHandle() {
         return &physicalDevice;
     }
 
-    void Instance::createInstance(std::string name) {
+    void Pipeline::createInstance(std::string name) {
         if (enableValidationLayers && !checkValidationLayerSupport()) {
             throw std::runtime_error("Validation layers requested, but not available!");
         }
@@ -122,7 +122,7 @@ namespace vkShmup {
 
     }
 
-    std::vector<const char*> Instance::getRequiredExtensions() {
+    std::vector<const char*> Pipeline::getRequiredExtensions() {
         uint32_t glfwExtensionCount = 0;
         const char** glfwExtensions;
         glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -136,7 +136,7 @@ namespace vkShmup {
         return extensions;
     }
 
-    void Instance::pickPhysicalDevice() {
+    void Pipeline::pickPhysicalDevice() {
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
         if (deviceCount == 0) {
@@ -156,7 +156,7 @@ namespace vkShmup {
         }
     }
 
-    void Instance::createLogicalDevice() {
+    void Pipeline::createLogicalDevice() {
         QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -196,13 +196,13 @@ namespace vkShmup {
         vkGetDeviceQueue(logcalDevice, indices.presentFamily.value(), 0, &presentQueue);
     }
 
-    void Instance::createSurface(GLFWwindow* window) {
+    void Pipeline::createSurface(GLFWwindow* window) {
         if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
             throw std::runtime_error("failed to create window surface!");
         }
     }
 
-    void Instance::createSwapChain(VkExtent2D actualExtent) {
+    void Pipeline::createSwapChain(VkExtent2D actualExtent) {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
@@ -253,7 +253,7 @@ namespace vkShmup {
         swapChainExtent = extent;
     }
 
-    void Instance::createImageViews() {
+    void Pipeline::createImageViews() {
         swapChainImageViews.resize(swapChainImages.size());
         for (size_t i = 0; i < swapChainImages.size(); i++) {
             VkImageViewCreateInfo createInfo{};
@@ -276,7 +276,11 @@ namespace vkShmup {
         }
     }
 
-    bool Instance::checkDeviceExtensionSupport(VkPhysicalDevice device) {
+    void Pipeline::createGraphicsPipeline() {
+
+    }
+
+    bool Pipeline::checkDeviceExtensionSupport(VkPhysicalDevice device) {
         uint32_t extensionCount;
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
@@ -292,7 +296,7 @@ namespace vkShmup {
         return requiredExtensions.empty();
     }
 
-    bool Instance::isDeviceSuitable(VkPhysicalDevice device) {
+    bool Pipeline::isDeviceSuitable(VkPhysicalDevice device) {
         QueueFamilyIndices indices = findQueueFamilies(device);
 
         bool extensionsSupported = checkDeviceExtensionSupport(device);
@@ -305,7 +309,7 @@ namespace vkShmup {
         return indices.isComplete() && extensionsSupported && swapChainAdequate;
     }
 
-    VKAPI_ATTR VkBool32 VKAPI_CALL Instance::debugCallback(
+    VKAPI_ATTR VkBool32 VKAPI_CALL Pipeline::debugCallback(
             VkDebugUtilsMessageSeverityFlagBitsEXT /*messageSeverity*/,
             VkDebugUtilsMessageTypeFlagsEXT /*messageType*/,
             const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -317,7 +321,7 @@ namespace vkShmup {
     }
 
     template <typename T>
-    void Instance::setupDebugMessenger(T callback) {
+    void Pipeline::setupDebugMessenger(T callback) {
         VkDebugUtilsMessengerCreateInfoEXT createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
         createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
@@ -330,7 +334,7 @@ namespace vkShmup {
         }
     }
 
-    VkResult Instance::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+    VkResult Pipeline::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
         auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
         if (func != nullptr) {
             return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -339,14 +343,14 @@ namespace vkShmup {
         }
     }
 
-    void Instance::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+    void Pipeline::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
         auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
         if (func != nullptr) {
             func(instance, debugMessenger, pAllocator);
         }
     }
 
-    Instance::QueueFamilyIndices Instance::findQueueFamilies(VkPhysicalDevice device) {
+    Pipeline::QueueFamilyIndices Pipeline::findQueueFamilies(VkPhysicalDevice device) {
         QueueFamilyIndices indices;
         // Assign index to queue families that could be found
 
@@ -374,7 +378,7 @@ namespace vkShmup {
         return indices;
     }
 
-    Instance::SwapChainSupportDetails Instance::querySwapChainSupport(VkPhysicalDevice device) {
+    Pipeline::SwapChainSupportDetails Pipeline::querySwapChainSupport(VkPhysicalDevice device) {
         SwapChainSupportDetails details;
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
 
@@ -395,7 +399,7 @@ namespace vkShmup {
         return details;
     }
 
-    VkSurfaceFormatKHR Instance::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) {
+    VkSurfaceFormatKHR Pipeline::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) {
         for (const auto& availableFormat : availableFormats) {
             if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
                 return availableFormat;
@@ -404,7 +408,7 @@ namespace vkShmup {
         return availableFormats[0];
     }
 
-    VkPresentModeKHR Instance::chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) {
+    VkPresentModeKHR Pipeline::chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) {
         for (const auto& availablePresentMode : availablePresentModes) {
             if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
                 return availablePresentMode;
@@ -413,7 +417,7 @@ namespace vkShmup {
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    VkExtent2D Instance::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities,  VkExtent2D actualExtent) {
+    VkExtent2D Pipeline::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities, VkExtent2D actualExtent) {
         if (capabilities.currentExtent.width != UINT32_MAX) {
             return capabilities.currentExtent;
         } else {

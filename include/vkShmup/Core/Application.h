@@ -6,7 +6,7 @@
 #define VKSHMUP_APPLICATION_H
 #include <string>
 #include "vkShmup/Core/Window.h"
-#include "vkShmup/Vk/Instance.h"
+#include "vkShmup/Vk/Pipeline.h"
 
 namespace vkShmup {
     class Application {
@@ -26,7 +26,7 @@ namespace vkShmup {
         // members
         std::string name;
         vkShmup::Window::unique_ptr window;
-        vkShmup::Instance::unique_ptr instance;
+        vkShmup::Pipeline::unique_ptr pipeline;
 
     };
 }

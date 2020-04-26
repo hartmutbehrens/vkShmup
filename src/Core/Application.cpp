@@ -5,7 +5,7 @@
 
 #include <utility>
 #include "vkShmup/Core/Window.h"
-#include "vkShmup/Vk/Instance.h"
+#include "vkShmup/Vk/Pipeline.h"
 
 namespace vkShmup {
 
@@ -33,8 +33,8 @@ namespace vkShmup {
     }
 
     void Application::initVulkan() {
-        instance = Instance::create(name);
-        instance->initVulkan(window.get());
+        pipeline = Pipeline::create(name);
+        pipeline->initVulkan(window.get());
     }
 
     void Application::mainLoop() {
