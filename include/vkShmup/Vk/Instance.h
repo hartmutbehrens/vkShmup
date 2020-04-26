@@ -7,6 +7,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <memory>
+#include <optional>     // C++17
 #include <string>
 #include <vector>
 
@@ -20,12 +21,22 @@ namespace vkShmup {
         void pickPhysicalDevice();
         ~Instance();
 
+        struct QueueFamilyIndices {
+            std::optional<uint32_t> graphicsFamily;
+
+            bool isComplete() {
+                return graphicsFamily.has_value();
+            }
+        };
+
+
     protected:
         Instance();
         explicit Instance(std::string name);
 
     private:
         void createInstance(std::string name = {"application"});
+
         static bool isDeviceSuitable(VkPhysicalDevice device);
         static std::vector<const char*> getRequiredExtensions();
         static bool checkValidationLayerSupport();
@@ -41,6 +52,8 @@ namespace vkShmup {
                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                 void* pUserData);
         static std::vector<VkExtensionProperties> extensions();
+        static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+        // members
         VkInstance instance;
         VkPhysicalDevice physicalDevice;
         VkDebugUtilsMessengerEXT debugMessenger;

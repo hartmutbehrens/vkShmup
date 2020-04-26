@@ -108,14 +108,6 @@ namespace vkShmup {
 
     }
 
-    std::vector<VkExtensionProperties> Instance::extensions() {
-        uint32_t extensionCount = 0;
-        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-        static std::vector<VkExtensionProperties> ext(extensionCount);
-        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, ext.data());
-        return ext;
-    }
-
     std::vector<const char*> Instance::getRequiredExtensions() {
         uint32_t glfwExtensionCount = 0;
         const char** glfwExtensions;
@@ -157,8 +149,10 @@ namespace vkShmup {
 
         VkPhysicalDeviceFeatures deviceFeatures;
         vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+        QueueFamilyIndices indices = findQueueFamilies(device);
         return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
-               deviceFeatures.geometryShader;
+               deviceFeatures.geometryShader &&
+               indices.isComplete();
     }
 
     VKAPI_ATTR VkBool32 VKAPI_CALL Instance::debugCallback(
@@ -200,6 +194,35 @@ namespace vkShmup {
         if (func != nullptr) {
             func(instance, debugMessenger, pAllocator);
         }
+    }
+
+    std::vector<VkExtensionProperties> Instance::extensions() {
+        uint32_t extensionCount = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+        static std::vector<VkExtensionProperties> ext(extensionCount);
+        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, ext.data());
+        return ext;
+    }
+
+    Instance::QueueFamilyIndices Instance::findQueueFamilies(VkPhysicalDevice device) {
+        QueueFamilyIndices indices;
+        // Assign index to queue families that could be found
+        uint32_t queueFamilyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+        int i = 0;
+        for (const auto& queueFamily : queueFamilies) {
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                indices.graphicsFamily = i;
+            }
+            if (indices.isComplete()) {
+                break;
+            }
+            i++;
+        }
+        return indices;
     }
 
 }
