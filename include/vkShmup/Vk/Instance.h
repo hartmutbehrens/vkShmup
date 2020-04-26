@@ -66,6 +66,7 @@ namespace vkShmup {
         VkDevice logcalDevice;
 
         VkQueue graphicsQueue;
+        VkQueue presentQueue;
     };
 }
 
