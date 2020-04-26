@@ -32,6 +32,11 @@ namespace vkShmup {
             }
         };
 
+        struct SwapChainSupportDetails {
+            VkSurfaceCapabilitiesKHR capabilities;
+            std::vector<VkSurfaceFormatKHR> formats;
+            std::vector<VkPresentModeKHR> presentModes;
+        };
 
     protected:
         Instance();
@@ -55,6 +60,7 @@ namespace vkShmup {
                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                 void* pUserData);
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
         // members
 
         VkInstance instance;
