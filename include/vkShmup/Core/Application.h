@@ -12,7 +12,7 @@ namespace vkShmup {
     class Application {
     public:
         Application();
-        Application(std::string name);
+        explicit Application(std::string name);
         ~Application() = default;
         void run();
 

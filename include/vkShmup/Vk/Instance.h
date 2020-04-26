@@ -22,7 +22,7 @@ namespace vkShmup {
 
     protected:
         Instance();
-        Instance(std::string name);
+        explicit Instance(std::string name);
 
     private:
         void createInstance(std::string name = {"application"});

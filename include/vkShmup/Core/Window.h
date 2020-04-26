@@ -16,12 +16,12 @@ namespace vkShmup {
         using unique_ptr = std::unique_ptr<Window, GLFWwindowDestroyer>;
         static unique_ptr create(std::string name);
 
-        GLFWwindow* handle() const;
-        ~Window();
+        [[nodiscard]] GLFWwindow* handle() const;
+        ~Window() = default;
 
     protected:
         Window();
-        Window(std::string name);
+        explicit Window(std::string name);
 
     private:
         GLFWwindow *w;

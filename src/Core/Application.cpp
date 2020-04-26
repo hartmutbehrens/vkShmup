@@ -2,6 +2,8 @@
 // Created by hartmut on 2020/04/25.
 //
 #include "vkShmup/Core/Application.h"
+
+#include <utility>
 #include "vkShmup/Core/Window.h"
 #include "vkShmup/Vk/Instance.h"
 
@@ -10,7 +12,7 @@ namespace vkShmup {
     Application::Application(): name("application") {
     }
 
-    Application::Application(std::string name): name(name) {
+    Application::Application(std::string name): name(std::move(name)) {
     }
 
     // public methods

@@ -4,6 +4,7 @@
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 #include "vkShmup/Vk/Instance.h"
 
 const std::vector<const char*> validationLayers = {
@@ -50,7 +51,7 @@ namespace vkShmup {
     }
 
     Instance::Instance(std::string name) {
-        createInstance(name);
+        createInstance(std::move(name));
         if (enableValidationLayers) {
             setupDebugMessenger(debugCallback);
         }
