@@ -7,10 +7,7 @@
 #include <stdexcept>
 #include <utility>
 #include "vkShmup/Vk/Instance.h"
-
-// TODO: remove the duplication either here or in Window.cpp
-const uint32_t WIDTH = 800;
-const uint32_t HEIGHT = 600;
+#include "vkShmup/Core/Window.h"
 
 const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
@@ -73,11 +70,11 @@ namespace vkShmup {
         return std::unique_ptr<Instance>(new Instance(std::move(name)));
     }
 
-    void Instance::initialize(GLFWwindow *window) {
-        createSurface(window);
+    void Instance::initVulkan(Window *window) {
+        createSurface(window->handle());
         pickPhysicalDevice();
         createLogicalDevice();
-        createSwapChain();
+        createSwapChain(window->actualExtent());
     }
 
     VkInstance* Instance::instanceHandle() {
@@ -200,12 +197,12 @@ namespace vkShmup {
         }
     }
 
-    void Instance::createSwapChain() {
+    void Instance::createSwapChain(VkExtent2D actualExtent) {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
+        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, actualExtent);
 
         uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
         if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
@@ -388,12 +385,10 @@ namespace vkShmup {
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    VkExtent2D Instance::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {
+    VkExtent2D Instance::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities,  VkExtent2D actualExtent) {
         if (capabilities.currentExtent.width != UINT32_MAX) {
             return capabilities.currentExtent;
         } else {
-            VkExtent2D actualExtent = {WIDTH, HEIGHT};
-
             actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
             actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
 

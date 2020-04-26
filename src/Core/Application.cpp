@@ -29,12 +29,12 @@ namespace vkShmup {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // don't create an OpenGL context
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        window = Window::create(name);
+        window = Window::create(name.c_str());
     }
 
     void Application::initVulkan() {
         instance = Instance::create(name);
-        instance->initialize(window->handle());
+        instance->initVulkan(window.get());
     }
 
     void Application::mainLoop() {

@@ -14,20 +14,19 @@ namespace vkShmup {
             void operator()(Window *win) { glfwDestroyWindow(win->handle()); }
         };
         using unique_ptr = std::unique_ptr<Window, GLFWwindowDestroyer>;
-        static unique_ptr create(std::string name);
+        static unique_ptr create(const char* name);
 
         [[nodiscard]] GLFWwindow* handle() const;
+        VkExtent2D actualExtent() { return extent; }
         ~Window() = default;
 
     protected:
         Window();
-        explicit Window(std::string name);
+        explicit Window(const char* name);
 
     private:
         GLFWwindow *w;
-        std::string name;
-        uint32_t width;
-        uint32_t height;
+        VkExtent2D extent;
     };
 }
 

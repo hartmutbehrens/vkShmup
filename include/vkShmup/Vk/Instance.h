@@ -12,17 +12,18 @@
 #include <vector>
 
 namespace vkShmup {
+    class Window;
     class Instance {
     public:
         using unique_ptr = std::unique_ptr<Instance>;
         static unique_ptr create(std::string name);
-        void initialize(GLFWwindow* window);
+        void initVulkan(Window* window);
         VkInstance* instanceHandle();
         VkPhysicalDevice* deviceHandle();
         void pickPhysicalDevice();
         void createLogicalDevice();
         void createSurface(GLFWwindow* window);
-        void createSwapChain();
+        void createSwapChain(VkExtent2D actualExtent);
         ~Instance();
 
         struct QueueFamilyIndices {
@@ -65,7 +66,7 @@ namespace vkShmup {
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-        VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+        VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, VkExtent2D actualExtent);
         // members
 
         VkInstance instance;
