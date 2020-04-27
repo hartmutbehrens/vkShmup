@@ -28,6 +28,8 @@ namespace vkShmup {
         void createRenderPass();
         void createGraphicsPipeline();
         void createFramebuffers();
+        void createCommandPool();
+        void createCommandBuffers();
         ~Pipeline();
 
         struct QueueFamilyIndices {
@@ -92,6 +94,8 @@ namespace vkShmup {
         VkRenderPass renderPass;
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
+        VkCommandPool commandPool;
+        std::vector<VkCommandBuffer> commandBuffers;
     };
 }
 
