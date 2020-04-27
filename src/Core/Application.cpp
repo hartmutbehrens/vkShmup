@@ -38,7 +38,8 @@ namespace vkShmup {
     }
 
     void Application::cleanup() {
-        // window cleanup handled automatically via window unique_ptr
+        // window cleanup handled automatically via window unique_ptr release
+        // pipeline cleanup handled automatically via pipeline unique_ptr release
     }
 
 } // namespace vkShmup

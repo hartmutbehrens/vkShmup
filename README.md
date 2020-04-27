@@ -40,7 +40,7 @@ You may see a warning stating `Could NOT find Vulkan`, but you can safely ignore
 ## Linux
 Do the following:
 ```
-export VULKAN_SDK_PATH=</path/to/vulkan-sdk/x.y.z.w/x86_64
+export VULKAN_SDK_PATH=</path/to/vulkan-sdk/x.y.z.w/x86_64>
 export VK_LAYER_PATH=$VULKAN_SDK_PATH/etc/vulkan/explicit_layer.d
 mkdir build && cd build
 cmake </path/to/vkShmup>
