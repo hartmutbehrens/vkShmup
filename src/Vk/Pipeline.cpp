@@ -282,6 +282,7 @@ namespace vkShmup {
     }
 
     void Pipeline::createGraphicsPipeline() {
+        // the file locations are relative to the built binary
         auto vertShaderModule = ShaderModule::create("GLSL/vert.spv", &logicalDevice);
         auto fragShaderModule = ShaderModule::create("GLSL/frag.spv", &logicalDevice);
 
@@ -299,6 +300,7 @@ namespace vkShmup {
 
         VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
 
+        // shader modules cleaned up automatically via std::unique_ptr
     }
 
     bool Pipeline::checkDeviceExtensionSupport(VkPhysicalDevice device) {
