@@ -89,6 +89,7 @@ namespace vkShmup {
         std::vector<VkImageView> swapChainImageViews;
         VkRenderPass renderPass;
         VkPipelineLayout pipelineLayout;
+        VkPipeline graphicsPipeline;
     };
 }
 
