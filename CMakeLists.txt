@@ -14,7 +14,9 @@ endif()
 
 # check for VULKAN_SDK_PATH path variable or set a default..
 set(VULKAN_SDK_PATH $ENV{VULKAN_SDK_PATH})
-if(NOT EXISTS ${VULKAN_SDK_PATH})
+if(EXISTS ${VULKAN_SDK_PATH})
+    message("VULKAN_SDK_PATH = ${VULKAN_SDK_PATH}")
+else()
     message("VULKAN_SDK_PATH = ${VULKAN_SDK_PATH} does not exist")
 endif()
 
@@ -33,6 +35,12 @@ add_executable(vkShmup
         src/main.cpp)
 link_directories(${VULKAN_SDK_PATH}/include)
 target_link_libraries(vkShmup Core Vk glfw vulkan)
+
+add_custom_command(
+        TARGET vkShmup POST_BUILD
+        COMMAND export VULKAN_SDK_PATH=${VULKAN_SDK_PATH} && ${CMAKE_SOURCE_DIR}/GLSL/compile.sh
+        COMMENT "Compiling shaders" VERBATIM
+)
 
 add_custom_command(
         TARGET vkShmup POST_BUILD
