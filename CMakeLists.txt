@@ -13,7 +13,7 @@ else()
 endif()
 
 # check for VULKAN_SDK_PATH path variable or set a default..
-set(VULKAN_SDK_PATH "/home/hartmut/projects/vulkan-sdk/1.2.135.0/x86_64" CACHE STRING "Path to Vulkan SDK x86_64 directory")
+set(VULKAN_SDK_PATH $ENV{VULKAN_SDK_PATH})
 if(NOT EXISTS ${VULKAN_SDK_PATH})
     message("VULKAN_SDK_PATH = ${VULKAN_SDK_PATH} does not exist")
 endif()

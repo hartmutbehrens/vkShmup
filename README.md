@@ -2,10 +2,10 @@
 
 A vertical scrolling shoot-em-up to teach myself Vulkan and get up to speed on C++17.
 
-# Getting Started
+# Prerequisites
 
 ## Linux
-Install the prerequisites:
+Install the following prerequisites:
 
 ### GLM, X and XCB libraries:
 
@@ -35,3 +35,22 @@ sudo make install
 ```
 You may see a warning stating `Could NOT find Vulkan`, but you can safely ignore this message. 
 
+# Compiling
+
+## Linux
+Do the following:
+```
+export VULKAN_SDK_PATH=</path/to/vulkan-sdk/x.y.z.w/x86_64
+export VK_LAYER_PATH=$VULKAN_SDK_PATH/etc/vulkan/explicit_layer.d
+mkdir build && cd build
+cmake </path/to/vkShmup>
+make
+```
+
+# Running
+Execute the following in the build directory:
+## Linux
+```
+export LD_LIBRARY_PATH=/home/hartmut/projects/vulkan-sdk/1.2.135.0/x86_64/lib/
+./vkShmup
+```
