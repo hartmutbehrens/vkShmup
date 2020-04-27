@@ -27,6 +27,7 @@ namespace vkShmup {
         void createImageViews();
         void createRenderPass();
         void createGraphicsPipeline();
+        void createFramebuffers();
         ~Pipeline();
 
         struct QueueFamilyIndices {
@@ -87,6 +88,7 @@ namespace vkShmup {
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;
         std::vector<VkImageView> swapChainImageViews;
+        std::vector<VkFramebuffer> swapChainFramebuffers;
         VkRenderPass renderPass;
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
