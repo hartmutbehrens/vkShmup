@@ -5,8 +5,8 @@
 #include <iostream>
 #include <set>
 #include <stdexcept>
-#include <utility>
 #include "vkShmup/Vk/Pipeline.h"
+#include "vkShmup/Vk/ShaderModule.h"
 #include "vkShmup/Core/Window.h"
 
 const std::vector<const char*> validationLayers = {
@@ -58,10 +58,10 @@ namespace vkShmup {
 
     Pipeline::~Pipeline() {
         for (auto imageView : swapChainImageViews) {
-            vkDestroyImageView(logcalDevice, imageView, nullptr);
+            vkDestroyImageView(logicalDevice, imageView, nullptr);
         }
-        vkDestroySwapchainKHR(logcalDevice, swapChain, nullptr);
-        vkDestroyDevice(logcalDevice, nullptr);
+        vkDestroySwapchainKHR(logicalDevice, swapChain, nullptr);
+        vkDestroyDevice(logicalDevice, nullptr);
 
         if (enableValidationLayers) {
             DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
@@ -80,14 +80,19 @@ namespace vkShmup {
         createLogicalDevice();
         createSwapChain(window->actualExtent());
         createImageViews();
+        createGraphicsPipeline();
     }
 
     VkInstance* Pipeline::instanceHandle() {
         return &instance;
     }
 
-    VkPhysicalDevice * Pipeline::deviceHandle() {
+    VkPhysicalDevice* Pipeline::physicalDeviceHandle() {
         return &physicalDevice;
+    }
+
+    VkDevice* Pipeline::logicalDeviceHandle() {
+        return &logicalDevice;
     }
 
     void Pipeline::createInstance(const char* name) {
@@ -189,11 +194,11 @@ namespace vkShmup {
         } else {
             createInfo.enabledLayerCount = 0;
         }
-        if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &logcalDevice) != VK_SUCCESS) {
+        if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create logical device!");
         }
-        vkGetDeviceQueue(logcalDevice, indices.graphicsFamily.value(), 0, &graphicsQueue);
-        vkGetDeviceQueue(logcalDevice, indices.presentFamily.value(), 0, &presentQueue);
+        vkGetDeviceQueue(logicalDevice, indices.graphicsFamily.value(), 0, &graphicsQueue);
+        vkGetDeviceQueue(logicalDevice, indices.presentFamily.value(), 0, &presentQueue);
     }
 
     void Pipeline::createSurface(GLFWwindow* window) {
@@ -243,12 +248,12 @@ namespace vkShmup {
         createInfo.clipped = VK_TRUE;
         createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-        if (vkCreateSwapchainKHR(logcalDevice, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
+        if (vkCreateSwapchainKHR(logicalDevice, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
             throw std::runtime_error("failed to create swap chain!");
         }
-        vkGetSwapchainImagesKHR(logcalDevice, swapChain, &imageCount, nullptr);
+        vkGetSwapchainImagesKHR(logicalDevice, swapChain, &imageCount, nullptr);
         swapChainImages.resize(imageCount);
-        vkGetSwapchainImagesKHR(logcalDevice, swapChain, &imageCount, swapChainImages.data());
+        vkGetSwapchainImagesKHR(logicalDevice, swapChain, &imageCount, swapChainImages.data());
         swapChainImageFormat = surfaceFormat.format;
         swapChainExtent = extent;
     }
@@ -270,13 +275,29 @@ namespace vkShmup {
             createInfo.subresourceRange.levelCount = 1;
             createInfo.subresourceRange.baseArrayLayer = 0;
             createInfo.subresourceRange.layerCount = 1;
-            if (vkCreateImageView(logcalDevice, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
+            if (vkCreateImageView(logicalDevice, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
                 throw std::runtime_error("Failed to create image views!");
             }
         }
     }
 
     void Pipeline::createGraphicsPipeline() {
+        auto vertShaderModule = ShaderModule::create("GLSL/vert.spv", &logicalDevice);
+        auto fragShaderModule = ShaderModule::create("GLSL/frag.spv", &logicalDevice);
+
+        VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+        vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+        vertShaderStageInfo.module = *vertShaderModule->handle();
+        vertShaderStageInfo.pName = "main";
+
+        VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+        fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        fragShaderStageInfo.module = *fragShaderModule->handle();
+        fragShaderStageInfo.pName = "main";
+
+        VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
 
     }
 

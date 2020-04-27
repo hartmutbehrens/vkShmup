@@ -25,7 +25,7 @@ add_library(Core
         src/Core/Application.cpp
         src/Core/Window.cpp)
 add_library(Vk
-        src/Vk/Pipeline.cpp)
+        src/Vk/Pipeline.cpp src/Vk/ShaderModule.cpp)
 target_include_directories(Core PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)

@@ -18,7 +18,8 @@ namespace vkShmup {
         static unique_ptr create(const char* name);
         void initVulkan(Window* window);
         VkInstance* instanceHandle();
-        VkPhysicalDevice* deviceHandle();
+        VkPhysicalDevice* physicalDeviceHandle();
+        VkDevice* logicalDeviceHandle();
         void pickPhysicalDevice();
         void createLogicalDevice();
         void createSurface(GLFWwindow* window);
@@ -75,7 +76,7 @@ namespace vkShmup {
         VkSurfaceKHR surface;
 
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-        VkDevice logcalDevice;
+        VkDevice logicalDevice;
 
         VkQueue graphicsQueue;
         VkQueue presentQueue;
