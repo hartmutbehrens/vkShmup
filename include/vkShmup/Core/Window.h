@@ -11,7 +11,10 @@ namespace vkShmup {
     class Window {
     public:
         struct GLFWwindowDestroyer {
-            void operator()(Window *win) { glfwDestroyWindow(win->handle()); }
+            void operator()(Window *win) {
+                glfwTerminate();
+                glfwDestroyWindow(win->handle());
+            }
         };
         using unique_ptr = std::unique_ptr<Window, GLFWwindowDestroyer>;
         static unique_ptr create(const char* name);

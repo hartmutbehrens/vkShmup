@@ -51,6 +51,6 @@ make
 Execute the following in the build directory:
 ## Linux
 ```
-export LD_LIBRARY_PATH=/home/hartmut/projects/vulkan-sdk/1.2.135.0/x86_64/lib/
+export LD_LIBRARY_PATH=$VULKAN_SDK_PATH/lib/
 ./vkShmup
 ```

@@ -23,10 +23,6 @@ namespace vkShmup {
 
     //private methods
     void Application::initWindow() {
-        glfwInit();
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // don't create an OpenGL context
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
         window = Window::create(name.c_str());
     }
 
@@ -42,7 +38,7 @@ namespace vkShmup {
     }
 
     void Application::cleanup() {
-        glfwTerminate();
+        // window cleanup handled automatically via window unique_ptr
     }
 
 } // namespace vkShmup
