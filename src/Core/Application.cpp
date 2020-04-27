@@ -34,7 +34,9 @@ namespace vkShmup {
     void Application::mainLoop() {
         while (!glfwWindowShouldClose(window->handle())) {
             glfwPollEvents();
+            pipeline->drawFrame();
         }
+        vkDeviceWaitIdle(*pipeline->logicalDeviceHandle());
     }
 
     void Application::cleanup() {

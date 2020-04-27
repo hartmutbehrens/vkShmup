@@ -30,6 +30,8 @@ namespace vkShmup {
         void createFramebuffers();
         void createCommandPool();
         void createCommandBuffers();
+        void createSemaphores();
+        void drawFrame();
         ~Pipeline();
 
         struct QueueFamilyIndices {
@@ -96,6 +98,8 @@ namespace vkShmup {
         VkPipeline graphicsPipeline;
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
+        VkSemaphore imageAvailableSemaphore;
+        VkSemaphore renderFinishedSemaphore;
     };
 }
 
