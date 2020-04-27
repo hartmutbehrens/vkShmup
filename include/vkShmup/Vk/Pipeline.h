@@ -25,6 +25,7 @@ namespace vkShmup {
         void createSurface(GLFWwindow* window);
         void createSwapChain(VkExtent2D actualExtent);
         void createImageViews();
+        void createRenderPass();
         void createGraphicsPipeline();
         ~Pipeline();
 
@@ -86,6 +87,7 @@ namespace vkShmup {
         VkFormat swapChainImageFormat;
         VkExtent2D swapChainExtent;
         std::vector<VkImageView> swapChainImageViews;
+        VkRenderPass renderPass;
         VkPipelineLayout pipelineLayout;
     };
 }
