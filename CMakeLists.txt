@@ -33,3 +33,10 @@ add_executable(vkShmup
         src/main.cpp)
 link_directories(${VULKAN_SDK_PATH}/include)
 target_link_libraries(vkShmup Core Vk glfw vulkan)
+
+add_custom_command(
+        TARGET vkShmup POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/GLSL ${CMAKE_CURRENT_BINARY_DIR}/GLSL
+        COMMENT "Copying shaders" VERBATIM
+)
