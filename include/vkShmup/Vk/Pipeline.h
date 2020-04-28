@@ -23,7 +23,7 @@ namespace vkShmup {
         void pickPhysicalDevice();
         void createLogicalDevice();
         void createSurface(GLFWwindow* window);
-        void createSwapChain(VkExtent2D actualExtent);
+        void createSwapChain(GLFWwindow* window);
         void createImageViews();
         void createRenderPass();
         void createGraphicsPipeline();
@@ -32,6 +32,8 @@ namespace vkShmup {
         void createCommandBuffers();
         void createSyncObjects();
         void drawFrame();
+        void cleanupSwapChain();
+        void recreateSwapChain(Window *window);
         ~Pipeline();
 
         struct QueueFamilyIndices {
@@ -72,9 +74,9 @@ namespace vkShmup {
                 void* pUserData);
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-        VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-        VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-        VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, VkExtent2D actualExtent);
+        static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+        static VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+        static VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window);
         // members
 
         VkInstance instance;

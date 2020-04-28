@@ -20,7 +20,6 @@ namespace vkShmup {
         static unique_ptr create(const char* name);
 
         [[nodiscard]] GLFWwindow* handle() const;
-        VkExtent2D actualExtent() { return extent; }
         ~Window() = default;
 
     protected:
