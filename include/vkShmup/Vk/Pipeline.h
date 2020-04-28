@@ -16,7 +16,7 @@ namespace vkShmup {
     public:
         using unique_ptr = std::unique_ptr<Pipeline>;
         static unique_ptr create(const char* name);
-        void initVulkan(Window* window);
+        void initVulkan(GLFWwindow* window);
         VkInstance* instanceHandle();
         VkPhysicalDevice* physicalDeviceHandle();
         VkDevice* logicalDeviceHandle();
@@ -31,9 +31,9 @@ namespace vkShmup {
         void createCommandPool();
         void createCommandBuffers();
         void createSyncObjects();
-        void drawFrame();
+        void drawFrame(GLFWwindow* window);
         void cleanupSwapChain();
-        void recreateSwapChain(Window *window);
+        void recreateSwapChain(GLFWwindow* window);
         ~Pipeline();
 
         struct QueueFamilyIndices {

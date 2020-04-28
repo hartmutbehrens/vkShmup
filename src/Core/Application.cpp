@@ -28,13 +28,13 @@ namespace vkShmup {
 
     void Application::initVulkan() {
         pipeline = Pipeline::create(name.c_str());
-        pipeline->initVulkan(window.get());
+        pipeline->initVulkan(window->handle());
     }
 
     void Application::mainLoop() {
         while (!glfwWindowShouldClose(window->handle())) {
             glfwPollEvents();
-            pipeline->drawFrame();
+            pipeline->drawFrame(window->handle());
         }
         vkDeviceWaitIdle(*pipeline->logicalDeviceHandle());
     }

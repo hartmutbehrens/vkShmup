@@ -80,11 +80,11 @@ namespace vkShmup {
         return std::unique_ptr<Pipeline>(new Pipeline(name));
     }
 
-    void Pipeline::initVulkan(Window *window) {
-        createSurface(window->handle());
+    void Pipeline::initVulkan(GLFWwindow* window) {
+        createSurface(window);
         pickPhysicalDevice();
         createLogicalDevice();
-        createSwapChain(window->handle());
+        createSwapChain(window);
         createImageViews();
         createRenderPass();
         createGraphicsPipeline();
@@ -550,10 +550,18 @@ namespace vkShmup {
         }
     }
 
-    void Pipeline::drawFrame() {
+    void Pipeline::drawFrame(GLFWwindow* window) {
         vkWaitForFences(logicalDevice, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
         uint32_t imageIndex;
-        vkAcquireNextImageKHR(logicalDevice, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+        VkResult result = vkAcquireNextImageKHR(logicalDevice, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+        if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+            recreateSwapChain(window);
+            return;
+        } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+            throw std::runtime_error("failed to acquire swap chain image!");
+        }
+
 
         // Check if a previous frame is using this image (i.e. there is its fence to wait on)
         if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
@@ -616,12 +624,12 @@ namespace vkShmup {
     }
 
 
-    void Pipeline::recreateSwapChain(Window *window) {
+    void Pipeline::recreateSwapChain(GLFWwindow* window) {
         vkDeviceWaitIdle(logicalDevice);
 
         cleanupSwapChain();
 
-        createSwapChain(window->handle());
+        createSwapChain(window);
         createImageViews();
         createRenderPass();
         createGraphicsPipeline();
