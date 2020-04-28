@@ -25,7 +25,7 @@ namespace vkShmup {
         vkDestroyShaderModule(logicalDevice, shaderModule, nullptr);
     }
 
-    const VkShaderModule& ShaderModule::handle() {
+    const VkShaderModule& ShaderModule::handle() const {
         return shaderModule;
     }
 

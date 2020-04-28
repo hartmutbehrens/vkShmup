@@ -4,9 +4,10 @@
 
 #ifndef VKSHMUP_SHADERMODULE_H
 #define VKSHMUP_SHADERMODULE_H
-#include <vulkan/vulkan.h>
 #include <memory>
 #include <vector>
+#include <vulkan/vulkan.h>
+
 
 namespace vkShmup {
     // these methods are not lumped together with Pipeline because the VkShaderModule
@@ -16,7 +17,7 @@ namespace vkShmup {
         static std::unique_ptr<ShaderModule> create(const char* spirvFilename, const VkDevice& device);
         ShaderModule() = delete;
         ~ShaderModule();
-        const VkShaderModule& handle();
+        [[nodiscard]] const VkShaderModule& handle() const;
 
     protected:
         ShaderModule(const char* spirvFilename, const VkDevice& device);
@@ -27,7 +28,6 @@ namespace vkShmup {
         VkShaderModule shaderModule;
         VkDevice logicalDevice;
     };
-
 }
 
 #endif //VKSHMUP_SHADERMODULE_H
