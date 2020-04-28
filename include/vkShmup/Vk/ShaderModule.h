@@ -13,19 +13,19 @@ namespace vkShmup {
     // has a different lifetime compared to the other pipeline components
     class ShaderModule {
     public:
-        static std::unique_ptr<ShaderModule> create(const char* spirvFilename, VkDevice* device);
+        static std::unique_ptr<ShaderModule> create(const char* spirvFilename, const VkDevice& device);
         ShaderModule() = delete;
         ~ShaderModule();
-        VkShaderModule* handle();
+        const VkShaderModule& handle();
 
     protected:
-        ShaderModule(const char* spirvFilename, VkDevice* device);
+        ShaderModule(const char* spirvFilename, const VkDevice& device);
         void createShaderModule(const std::vector<char>& code);
     private:
         static std::vector<char> readFile(const char* spirvFilename);
         // members
         VkShaderModule shaderModule;
-        VkDevice* logicalDevice;
+        VkDevice logicalDevice;
     };
 
 }

@@ -339,19 +339,19 @@ namespace vkShmup {
 
     void Pipeline::createGraphicsPipeline() {
         // the file locations are relative to the built binary
-        auto vertShaderModule = ShaderModule::create("GLSL/vert.spv", &logicalDevice);
-        auto fragShaderModule = ShaderModule::create("GLSL/frag.spv", &logicalDevice);
+        auto vertShaderModule = ShaderModule::create("GLSL/vert.spv", logicalDevice);
+        auto fragShaderModule = ShaderModule::create("GLSL/frag.spv", logicalDevice);
 
         VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
         vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-        vertShaderStageInfo.module = *vertShaderModule->handle();
+        vertShaderStageInfo.module = vertShaderModule->handle();
         vertShaderStageInfo.pName = "main";
 
         VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
         fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        fragShaderStageInfo.module = *fragShaderModule->handle();
+        fragShaderStageInfo.module = fragShaderModule->handle();
         fragShaderStageInfo.pName = "main";
 
         VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
