@@ -1,6 +1,7 @@
 //
 // Created by hartmut on 2020/04/25.
 //
+#include <functional>
 #include "vkShmup/Core/Application.h"
 #include "vkShmup/Core/Window.h"
 #include "vkShmup/Vk/Pipeline.h"
@@ -29,6 +30,8 @@ namespace vkShmup {
     void Application::initVulkan() {
         pipeline = Pipeline::create(name.c_str());
         pipeline->initVulkan(window->handle());
+        glfwSetWindowUserPointer(window->handle(), &pipeline);
+        glfwSetFramebufferSizeCallback(window->handle(), framebufferResizeCallback);
     }
 
     void Application::mainLoop() {
@@ -42,6 +45,11 @@ namespace vkShmup {
     void Application::cleanup() {
         // pipeline cleanup handled automatically via pipeline unique_ptr release
         // window cleanup handled automatically via window unique_ptr release
+    }
+
+    void Application::framebufferResizeCallback(GLFWwindow* window, int /*width*/, int /*height*/) {
+        auto p = reinterpret_cast<Pipeline*>(glfwGetWindowUserPointer(window));
+        p->frameBufferResized();
     }
 
 } // namespace vkShmup

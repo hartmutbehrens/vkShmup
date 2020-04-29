@@ -34,6 +34,7 @@ namespace vkShmup {
         void drawFrame(GLFWwindow* window);
         void cleanupSwapChain();
         void recreateSwapChain(GLFWwindow* window);
+        void frameBufferResized();
         ~Pipeline();
 
         struct QueueFamilyIndices {
@@ -105,6 +106,7 @@ namespace vkShmup {
         std::vector<VkFence> inFlightFences;
         std::vector<VkFence> imagesInFlight;
         size_t currentFrame = 0;
+        bool framebufferResized = false;
     };
 }
 

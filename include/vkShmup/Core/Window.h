@@ -5,6 +5,7 @@
 #define VKSHMUP_WINDOW_H
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#include <functional>
 #include <memory>
 
 namespace vkShmup {
@@ -18,7 +19,6 @@ namespace vkShmup {
         };
         using unique_ptr = std::unique_ptr<Window, GLFWwindowDestroyer>;
         static unique_ptr create(const char* name);
-
         [[nodiscard]] GLFWwindow* handle() const;
         ~Window() = default;
 

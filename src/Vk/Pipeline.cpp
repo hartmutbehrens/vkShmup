@@ -602,6 +602,13 @@ namespace vkShmup {
         presentInfo.pImageIndices = &imageIndex;
         presentInfo.pResults = nullptr; // Optional
         vkQueuePresentKHR(presentQueue, &presentInfo);
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
+            framebufferResized = false;
+            recreateSwapChain(window);
+        } else if (result != VK_SUCCESS) {
+            throw std::runtime_error("failed to present swap chain image!");
+        }
+
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
     }
 
@@ -635,6 +642,10 @@ namespace vkShmup {
         createGraphicsPipeline();
         createFramebuffers();
         createCommandBuffers();
+    }
+
+    void Pipeline::frameBufferResized() {
+        framebufferResized = true;
     }
 
     bool Pipeline::checkDeviceExtensionSupport(VkPhysicalDevice device) {

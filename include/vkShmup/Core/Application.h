@@ -22,6 +22,7 @@ namespace vkShmup {
         void initVulkan();
         void mainLoop();
         void cleanup();
+        static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
         // members
         std::string name;

@@ -19,14 +19,12 @@ namespace vkShmup {
     Window::Window(): extent{WIDTH, HEIGHT} {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // don't create an OpenGL context
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         w = glfwCreateWindow(extent.width, extent.height, "window", nullptr, nullptr);
     }
 
     Window::Window(const char* name): extent{WIDTH, HEIGHT} {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);   // don't create an OpenGL context
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         w = glfwCreateWindow(extent.width, extent.height, name, nullptr, nullptr);
     }
 }
