@@ -7,25 +7,22 @@
 
 namespace vkShmup {
     template <typename T>
-    std::unique_ptr<SyncObject<T>> SyncObject<T>::create(VkSemaphoreCreateInfo& semaphoreInfo, const VkDevice& device) {
-        return std::unique_ptr<SyncObject>(new SyncObject(semaphoreInfo, device));
+    template <typename B>
+    std::unique_ptr<SyncObject<T>> SyncObject<T>::create(B& createInfo, const VkDevice& device) {
+        static_assert(std::is_same_v<T, VkSemaphore> || std::is_same_v<T, VkFence >, "Only VkSemaphore or VkFence are allowed.");
+        return std::unique_ptr<SyncObject<T>>(new SyncObject<T>(createInfo, device));
     }
 
     template <typename T>
-    std::unique_ptr<SyncObject<T>> SyncObject<T>::create(VkFenceCreateInfo& fenceInfo, const VkDevice& device) {
-        return std::unique_ptr<SyncObject>(new SyncObject(fenceInfo, device));
-    }
-
-    template <typename T>
-    template <typename C>
-    SyncObject<T>::SyncObject(C &syncObjectInfo, const VkDevice &device): logicalDevice{device} {
+    template <typename B>
+    SyncObject<T>::SyncObject(B &createInfo, const VkDevice &device): logicalDevice{device} {
         if constexpr(std::is_same_v<T, VkSemaphore>) {
-            if (vkCreateSemaphore(logicalDevice, &syncObjectInfo, nullptr, &syncObject) != VK_SUCCESS) {
+            if (vkCreateSemaphore(logicalDevice, &createInfo, nullptr, &syncObject) != VK_SUCCESS) {
                 throw std::runtime_error("Failed to create a semaphore!");
             }
         }
         else {
-            if (vkCreateFence(logicalDevice, &syncObjectInfo, nullptr, &syncObject) != VK_SUCCESS) {
+            if (vkCreateFence(logicalDevice, &createInfo, nullptr, &syncObject) != VK_SUCCESS) {
                 throw std::runtime_error("Failed to create a fence!");
             }
         }

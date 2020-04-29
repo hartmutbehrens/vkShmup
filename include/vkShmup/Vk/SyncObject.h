@@ -11,14 +11,14 @@ namespace vkShmup {
     template <typename T>
     class SyncObject {
     public:
-        static std::unique_ptr<SyncObject> create(VkSemaphoreCreateInfo& semaphoreInfo, const VkDevice& device);
-        static std::unique_ptr<SyncObject> create(VkFenceCreateInfo& fenceInfo, const VkDevice& device);
+        template <typename B>
+        static std::unique_ptr<SyncObject> create(B& createInfo, const VkDevice& device);
         SyncObject() = delete;
         ~SyncObject();
         [[nodiscard]] const T& handle() const {return syncObject;}
     protected:
-        template <typename C>
-        SyncObject(C& syncObjectInfo, const VkDevice& device);
+        template <typename B>
+        SyncObject(B& createInfo, const VkDevice& device);
 
     private:
         T syncObject;
