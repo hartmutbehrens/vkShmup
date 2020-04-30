@@ -28,7 +28,6 @@ namespace vkShmup {
 
     private:
         GLFWwindow *w;
-        VkExtent2D extent;
     };
 }
 
