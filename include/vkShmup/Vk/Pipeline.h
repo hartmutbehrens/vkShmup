@@ -6,11 +6,43 @@
 #define VKSHMUP_PIPELINE_H
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <array>
 #include <memory>
 #include <optional>     // C++17
 #include <vector>
 
 namespace vkShmup {
+    struct Vertex {
+        glm::vec2 pos;
+        glm::vec3 color;
+
+        static VkVertexInputBindingDescription getBindingDescription() {
+            VkVertexInputBindingDescription bindingDescription{};
+            bindingDescription.binding = 0;
+            bindingDescription.stride = sizeof(Vertex);
+            bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+            return bindingDescription;
+        }
+
+        static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
+            std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+
+            attributeDescriptions[0].binding = 0;
+            attributeDescriptions[0].location = 0;
+            attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+            attributeDescriptions[0].offset = offsetof(Vertex, pos);
+
+            attributeDescriptions[1].binding = 0;
+            attributeDescriptions[1].location = 1;
+            attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+            attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+            return attributeDescriptions;
+        }
+    };
+
     class Window;
     class Pipeline {
     public:
@@ -28,6 +60,7 @@ namespace vkShmup {
         void createRenderPass();
         void createGraphicsPipeline();
         void createFramebuffers();
+        void createVertexBuffer();
         void createCommandPool();
         void createCommandBuffers();
         void createSyncObjects();
@@ -62,6 +95,7 @@ namespace vkShmup {
         bool isDeviceSuitable(VkPhysicalDevice device);
         static std::vector<const char*> getRequiredExtensions();
         static bool checkValidationLayerSupport();
+        uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
         template <typename T>
         void setupDebugMessenger(T callback);
@@ -99,6 +133,8 @@ namespace vkShmup {
         VkRenderPass renderPass;
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
+        VkBuffer vertexBuffer;
+        VkDeviceMemory vertexBufferMemory;
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
         std::vector<VkSemaphore> imageAvailableSemaphores;
