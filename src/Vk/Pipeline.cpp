@@ -502,7 +502,10 @@ namespace vkShmup {
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize = memRequirements.size;
         allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
-
+        // TODO: shouldn't actually call vkAllocateMemory for every individual buffer, because maxMemoryAllocationCount
+        // The right way to allocate memory for a large number of objects at the same time is to create a custom allocator
+        // that splits up a single allocation among many different objects by using the offset parameters.
+        // Or: use https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
         if (vkAllocateMemory(logicalDevice, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate buffer memory!");
         }
