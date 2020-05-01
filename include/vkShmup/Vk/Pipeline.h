@@ -60,6 +60,7 @@ namespace vkShmup {
         void createRenderPass();
         void createGraphicsPipeline();
         void createFramebuffers();
+        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
         void createVertexBuffer();
         void createCommandPool();
         void createCommandBuffers();
@@ -96,6 +97,7 @@ namespace vkShmup {
         static std::vector<const char*> getRequiredExtensions();
         static bool checkValidationLayerSupport();
         uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+        void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
         template <typename T>
         void setupDebugMessenger(T callback);
