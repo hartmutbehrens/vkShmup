@@ -26,13 +26,6 @@ const std::vector<vkShmup::Vertex> vertices = {
 };
 
 
-#ifdef NDEBUG
-const bool enableValidationLayers = false;
-#else
-const bool enableValidationLayers = true;
-#endif
-
-
 namespace vkShmup {
     bool Pipeline::checkValidationLayerSupport() {
         uint32_t layerCount;
@@ -52,16 +45,10 @@ namespace vkShmup {
 
     Pipeline::Pipeline() {
         createInstance("application");
-        if (enableValidationLayers) {
-            setupDebugMessenger(debugCallback);
-        }
     }
 
     Pipeline::Pipeline(const char* name) {
         createInstance(name);
-        if (enableValidationLayers) {
-            setupDebugMessenger(debugCallback);
-        }
     }
 
     Pipeline::~Pipeline() {
@@ -77,10 +64,9 @@ namespace vkShmup {
         vkDestroyCommandPool(logicalDevice, commandPool, nullptr);
 
         vkDestroyDevice(logicalDevice, nullptr);
-
-        if (enableValidationLayers) {
-            DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-        }
+#ifndef NDEBUG
+        DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+#endif
         vkDestroySurfaceKHR(instance, surface, nullptr);
         vkDestroyInstance(instance, nullptr);
     }
@@ -90,9 +76,13 @@ namespace vkShmup {
     }
 
     void Pipeline::initVulkan(GLFWwindow* window) {
+#ifndef NDEBUG
+        setupDebugMessenger(debugCallback);
+#endif
         createSurface(window);
         pickPhysicalDevice();
         createLogicalDevice();
+        createVMAllocator();
         createSwapChain(window);
         createImageViews();
         createRenderPass();
@@ -117,10 +107,11 @@ namespace vkShmup {
     }
 
     void Pipeline::createInstance(const char* name) {
-        if (enableValidationLayers && !checkValidationLayerSupport()) {
+#ifndef NDEBUG
+        if (!checkValidationLayerSupport()) {
             throw std::runtime_error("Validation layers requested, but not available!");
         }
-
+#endif
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         appInfo.pApplicationName = name;
@@ -136,12 +127,12 @@ namespace vkShmup {
         auto extensions = getRequiredExtensions();
         createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
-        if (enableValidationLayers) {
-            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-            createInfo.ppEnabledLayerNames = validationLayers.data();
-        } else {
-            createInfo.enabledLayerCount = 0;
-        }
+#ifdef NDEBUG
+        createInfo.enabledLayerCount = 0;
+#else
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+#endif
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create a Vulkan instance!");
         }
@@ -154,10 +145,9 @@ namespace vkShmup {
         glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
         std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-
-        if (enableValidationLayers) {
-            extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-        }
+#ifndef NDEBUG
+        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
 
         return extensions;
     }
@@ -209,17 +199,21 @@ namespace vkShmup {
         createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
         createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-        if (enableValidationLayers) {
-            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-            createInfo.ppEnabledLayerNames = validationLayers.data();
-        } else {
-            createInfo.enabledLayerCount = 0;
-        }
+#ifdef NDEBUG
+        createInfo.enabledLayerCount = 0;
+#else
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+#endif
         if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create logical device!");
         }
         vkGetDeviceQueue(logicalDevice, indices.graphicsFamily.value(), 0, &graphicsQueue);
         vkGetDeviceQueue(logicalDevice, indices.presentFamily.value(), 0, &presentQueue);
+    }
+
+    void Pipeline::createVMAllocator() {
+        vmAllocator = VMAllocator::create(instance, physicalDevice, logicalDevice);
     }
 
     void Pipeline::createSurface(GLFWwindow* window) {
@@ -728,8 +722,8 @@ namespace vkShmup {
     }
 
     void Pipeline::cleanupSwapChain() {
-        for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
-            vkDestroyFramebuffer(logicalDevice, swapChainFramebuffers[i], nullptr);
+        for (auto & swapChainFramebuffer : swapChainFramebuffers) {
+            vkDestroyFramebuffer(logicalDevice, swapChainFramebuffer, nullptr);
         }
 
         vkFreeCommandBuffers(logicalDevice, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
@@ -738,8 +732,8 @@ namespace vkShmup {
         vkDestroyPipelineLayout(logicalDevice, pipelineLayout, nullptr);
         vkDestroyRenderPass(logicalDevice, renderPass, nullptr);
 
-        for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-            vkDestroyImageView(logicalDevice, swapChainImageViews[i], nullptr);
+        for (auto & swapChainImageView : swapChainImageViews) {
+            vkDestroyImageView(logicalDevice, swapChainImageView, nullptr);
         }
 
         vkDestroySwapchainKHR(logicalDevice, swapChain, nullptr);

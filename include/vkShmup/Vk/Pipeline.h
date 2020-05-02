@@ -11,6 +11,7 @@
 #include <memory>
 #include <optional>     // C++17
 #include <vector>
+#include "vkShmup/Vk/VMAllocator.h"
 
 namespace vkShmup {
     struct Vertex {
@@ -54,6 +55,8 @@ namespace vkShmup {
         VkDevice* logicalDeviceHandle();
         void pickPhysicalDevice();
         void createLogicalDevice();
+        void createVMAllocator();
+        void createInstance(const char* name);
         void createSurface(GLFWwindow* window);
         void createSwapChain(GLFWwindow* window);
         void createImageViews();
@@ -91,7 +94,6 @@ namespace vkShmup {
         explicit Pipeline(const char* name);
 
     private:
-        void createInstance(const char* name);
         static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         bool isDeviceSuitable(VkPhysicalDevice device);
         static std::vector<const char*> getRequiredExtensions();
@@ -122,6 +124,7 @@ namespace vkShmup {
 
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
         VkDevice logicalDevice;
+        std::unique_ptr<VMAllocator> vmAllocator = nullptr;
 
         VkQueue graphicsQueue;
         VkQueue presentQueue;

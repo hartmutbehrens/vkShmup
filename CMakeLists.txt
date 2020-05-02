@@ -8,10 +8,8 @@ if (MSVC)
     add_compile_options(/W4 /WX)
 else()
     # lots of warnings and all warnings as errors
-    add_compile_options(-Wall -Wextra -pedantic -Werror)
-    # add_compile_options(-Wall)
+    add_compile_options(-Wall -Werror)
 endif()
-
 # check for VULKAN_SDK_PATH path variable or set a default..
 set(VULKAN_SDK_PATH $ENV{VULKAN_SDK_PATH})
 if(EXISTS ${VULKAN_SDK_PATH})
@@ -25,14 +23,15 @@ add_library(Core
         src/Core/Application.cpp
         src/Core/Window.cpp)
 add_library(Vk
+        third_party/VulkanMemoryAllocator/vk_mem_alloc.h
         src/Vk/Pipeline.cpp
         src/Vk/ShaderModule.cpp
-        src/Vk/SyncObject.cpp)
-target_include_directories(Core PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>)
+        src/Vk/SyncObject.cpp
+        src/Vk/VMAllocator.cpp)
 
-include_directories(include)
+include_directories(include
+        third_party)
+
 add_executable(vkShmup
         src/main.cpp)
 link_directories(${VULKAN_SDK_PATH}/include)
