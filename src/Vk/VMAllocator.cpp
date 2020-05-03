@@ -3,12 +3,14 @@
 //
 // Inject Vulkan Memory Allocator impl
 #define VMA_IMPLEMENTATION
+
+#include <iostream>
 #include "vkShmup/Vk/VMAllocator.h"
 
 
 namespace vkShmup {
-    std::unique_ptr<VMAllocator> VMAllocator::create(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device) {
-        return std::unique_ptr<VMAllocator>(new VMAllocator(instance, physicalDevice, device));
+    VMAllocator::unique_ptr VMAllocator::create(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device) {
+        return std::unique_ptr<VMAllocator, VmaDestroyer>(new VMAllocator(instance, physicalDevice, device), VmaDestroyer());
     }
 
     VMAllocator::VMAllocator(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device)
@@ -18,11 +20,6 @@ namespace vkShmup {
         allocatorInfo.device = device;
         allocatorInfo.instance = instance;
         vmaCreateAllocator(&allocatorInfo, &allocator);
-    }
-
-    VMAllocator::~VMAllocator() {
-        vmaDestroyAllocator(allocator);
-        allocator = nullptr;
     }
 
 }

@@ -53,8 +53,10 @@ namespace vkShmup {
 
     Pipeline::~Pipeline() {
         cleanupSwapChain();
-        vkDestroyBuffer(logicalDevice, vertexBuffer, nullptr);
-        vkFreeMemory(logicalDevice, vertexBufferMemory, nullptr);
+        vmaDestroyBuffer(vmAllocator->handle(), vertexBuffer, vertexBufferMemory);
+        // this must be called before the device is destroyed
+        // TODO: wrap all of these in unique_ptr
+        vmAllocator.reset();
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(logicalDevice, renderFinishedSemaphores[i], nullptr);
@@ -478,53 +480,63 @@ namespace vkShmup {
         }
     }
 
-    void Pipeline::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+    void Pipeline::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& bufferMemory) {
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = size;
         bufferInfo.usage = usage;
         bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if (vkCreateBuffer(logicalDevice, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create buffer!");
-        }
+//        if (vkCreateBuffer(logicalDevice, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+//            throw std::runtime_error("failed to create buffer!");
+//        }
+//
+//        VkMemoryRequirements memRequirements;
+//        vkGetBufferMemoryRequirements(logicalDevice, buffer, &memRequirements);
+//
+//        VkMemoryAllocateInfo allocInfo{};
+//        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+//        allocInfo.allocationSize = memRequirements.size;
+//        allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
+//        // TODO: shouldn't actually call vkAllocateMemory for every individual buffer, because maxMemoryAllocationCount
+//        // The right way to allocate memory for a large number of objects at the same time is to create a custom allocator
+//        // that splits up a single allocation among many different objects by using the offset parameters.
+//        // Or: use https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+//        if (vkAllocateMemory(logicalDevice, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
+//            throw std::runtime_error("failed to allocate buffer memory!");
+//        }
+//
+//        vkBindBufferMemory(logicalDevice, buffer, bufferMemory, 0);
+        // TODO: this needs to be configurable
+        VmaAllocationCreateInfo allocInfo = {};
+        allocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
 
-        VkMemoryRequirements memRequirements;
-        vkGetBufferMemoryRequirements(logicalDevice, buffer, &memRequirements);
-
-        VkMemoryAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
-        // TODO: shouldn't actually call vkAllocateMemory for every individual buffer, because maxMemoryAllocationCount
-        // The right way to allocate memory for a large number of objects at the same time is to create a custom allocator
-        // that splits up a single allocation among many different objects by using the offset parameters.
-        // Or: use https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
-        if (vkAllocateMemory(logicalDevice, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-            throw std::runtime_error("failed to allocate buffer memory!");
-        }
-
-        vkBindBufferMemory(logicalDevice, buffer, bufferMemory, 0);
+        vmaCreateBuffer(vmAllocator->handle(), &bufferInfo, &allocInfo, &buffer, &bufferMemory, nullptr);
     }
 
     void Pipeline::createVertexBuffer() {
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
         VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
+        //VkDeviceMemory stagingBufferMemory;
+        VmaAllocation stagingBufferMemory;
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+//
+//        void* data;
+//        vkMapMemory(logicalDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
+//        memcpy(data, vertices.data(), (size_t) bufferSize);
+//        vkUnmapMemory(logicalDevice, stagingBufferMemory);
 
         void* data;
-        vkMapMemory(logicalDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
+        vmaMapMemory(vmAllocator->handle(), stagingBufferMemory, &data);
         memcpy(data, vertices.data(), (size_t) bufferSize);
-        vkUnmapMemory(logicalDevice, stagingBufferMemory);
+        vmaUnmapMemory(vmAllocator->handle(), stagingBufferMemory);
 
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
 
         copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
 
-        vkDestroyBuffer(logicalDevice, stagingBuffer, nullptr);
-        vkFreeMemory(logicalDevice, stagingBufferMemory, nullptr);
+        vmaDestroyBuffer(vmAllocator->handle(), stagingBuffer, stagingBufferMemory);
     }
 
     uint32_t Pipeline::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {

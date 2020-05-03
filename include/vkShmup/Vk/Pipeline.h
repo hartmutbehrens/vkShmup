@@ -63,7 +63,7 @@ namespace vkShmup {
         void createRenderPass();
         void createGraphicsPipeline();
         void createFramebuffers();
-        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& bufferMemory);
         void createVertexBuffer();
         void createCommandPool();
         void createCommandBuffers();
@@ -124,7 +124,7 @@ namespace vkShmup {
 
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
         VkDevice logicalDevice;
-        std::unique_ptr<VMAllocator> vmAllocator = nullptr;
+        VMAllocator::unique_ptr vmAllocator = nullptr;
 
         VkQueue graphicsQueue;
         VkQueue presentQueue;
@@ -139,7 +139,7 @@ namespace vkShmup {
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
         VkBuffer vertexBuffer;
-        VkDeviceMemory vertexBufferMemory;
+        VmaAllocation vertexBufferMemory;
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
         std::vector<VkSemaphore> imageAvailableSemaphores;

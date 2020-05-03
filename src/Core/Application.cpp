@@ -1,7 +1,6 @@
 //
 // Created by hartmut on 2020/04/25.
 //
-#include <functional>
 #include "vkShmup/Core/Application.h"
 #include "vkShmup/Core/Window.h"
 #include "vkShmup/Vk/Pipeline.h"
