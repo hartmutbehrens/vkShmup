@@ -7,43 +7,22 @@
 
 namespace vkShmup {
 
-    Application::Application(): name("application") {
+    Application::Application(): Application("application") {
     }
 
-    Application::Application(std::string name): name(std::move(name)) {
-    }
-
-    // public methods
-    void Application::run() {
-        initWindow();
-        initVulkan();
-        mainLoop();
-        cleanup();
-    }
-
-    //private methods
-    void Application::initWindow() {
-        window = Window::create(name.c_str());
-    }
-
-    void Application::initVulkan() {
-        pipeline = Pipeline::create(name.c_str());
+    Application::Application(const char* name): window(Window::create(name)), pipeline(Pipeline::create(name)) {
         pipeline->initVulkan(window->handle());
         glfwSetWindowUserPointer(window->handle(), &pipeline);
         glfwSetFramebufferSizeCallback(window->handle(), framebufferResizeCallback);
     }
 
-    void Application::mainLoop() {
+    // public methods
+    void Application::run() {
         while (!glfwWindowShouldClose(window->handle())) {
             glfwPollEvents();
             pipeline->drawFrame(window->handle());
         }
         vkDeviceWaitIdle(*pipeline->logicalDeviceHandle());
-    }
-
-    void Application::cleanup() {
-        // pipeline cleanup handled automatically via pipeline unique_ptr release
-        // window cleanup handled automatically via window unique_ptr release
     }
 
     void Application::framebufferResizeCallback(GLFWwindow* window, int /*width*/, int /*height*/) {

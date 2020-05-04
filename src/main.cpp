@@ -4,9 +4,8 @@
 #include "vkShmup/Core/Application.h"
 
 int main() {
-    vkShmup::Application app{"vkShmup"};
-
     try {
+        vkShmup::Application app{"vkShmup"};
         app.run();
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;

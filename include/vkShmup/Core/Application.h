@@ -12,23 +12,17 @@ namespace vkShmup {
     class Application {
     public:
         Application();
-        explicit Application(std::string name);
+        explicit Application(const char* name);
         ~Application() = default;
         void run();
 
     private:
         // methods
-        void initWindow();
-        void initVulkan();
-        void mainLoop();
-        void cleanup();
         static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
         // members
-        std::string name;
         vkShmup::Window::unique_ptr window;
         vkShmup::Pipeline::unique_ptr pipeline;
-
     };
 }
 
