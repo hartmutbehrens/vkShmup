@@ -63,7 +63,7 @@ namespace vkShmup {
         void createRenderPass();
         void createGraphicsPipeline();
         void createFramebuffers();
-        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& bufferMemory);
+        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VmaAllocationCreateInfo allocInfo, VkBuffer& buffer, VmaAllocation& bufferMemory);
         void createVertexBuffer();
         void createCommandPool();
         void createCommandBuffers();

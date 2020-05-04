@@ -11,15 +11,10 @@
 namespace vkShmup {
     class VMAllocator {
     public:
-        struct VmaDestroyer {
-            void operator()(VMAllocator* vma) {
-                vmaDestroyAllocator(vma->allocator);
-                vma->allocator = nullptr;
-            }
-        };
-        using unique_ptr = std::unique_ptr<VMAllocator, VmaDestroyer>;
+        using unique_ptr = std::unique_ptr<VMAllocator>;
         static unique_ptr create(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device);
         [[nodiscard]] const VmaAllocator& handle() const { return allocator; }
+        ~VMAllocator();
     protected:
         VMAllocator(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device);
     private:
