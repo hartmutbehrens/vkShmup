@@ -3,24 +3,17 @@
 //
 #ifndef VKSHMUP_WINDOW_H
 #define VKSHMUP_WINDOW_H
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include <functional>
 #include <memory>
+// forward declaration
+struct GLFWwindow;
 
 namespace vkShmup {
     class Window {
     public:
-        struct GLFWwindowDestroyer {
-            void operator()(Window *win) {
-                glfwDestroyWindow(win->handle());
-                glfwTerminate();
-            }
-        };
-        using unique_ptr = std::unique_ptr<Window, GLFWwindowDestroyer>;
+        using unique_ptr = std::unique_ptr<Window>;
         static unique_ptr create(const char* name);
         [[nodiscard]] GLFWwindow* handle() const;
-        ~Window() = default;
+        ~Window();
 
     protected:
         Window();
