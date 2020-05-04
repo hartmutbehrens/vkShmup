@@ -4,10 +4,10 @@
 
 #ifndef VKSHMUP_APPLICATION_H
 #define VKSHMUP_APPLICATION_H
-#include <string>
 #include "vkShmup/Core/Window.h"
 #include "vkShmup/Vk/Pipeline.h"
 
+struct GLFWwindow;
 namespace vkShmup {
     class Application {
     public:

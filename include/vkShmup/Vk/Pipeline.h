@@ -4,8 +4,6 @@
 
 #ifndef VKSHMUP_PIPELINE_H
 #define VKSHMUP_PIPELINE_H
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <array>
 #include <memory>
@@ -13,6 +11,7 @@
 #include <vector>
 #include "vkShmup/Vk/VMAllocator.h"
 
+struct GLFWwindow;
 namespace vkShmup {
     struct Vertex {
         glm::vec2 pos;

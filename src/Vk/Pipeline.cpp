@@ -1,6 +1,8 @@
 //
 // Created by hartmut on 2020/04/25.
 //
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 #include <cstdint>
 #include <iostream>
 #include <set>
