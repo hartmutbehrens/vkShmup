@@ -16,9 +16,6 @@ namespace vkShmup {
     public:
         static std::unique_ptr<ShaderModule> create(const char* spirvFilename, const VkDevice& device);
         ShaderModule() = delete;
-        // TODO: presence of dtor prevents implicit generation of move constructor
-        // https://stackoverflow.com/questions/15485863/destructor-and-unique-ptr
-        // use deleter
         ~ShaderModule();
         [[nodiscard]] const VkShaderModule& handle() const;
 
