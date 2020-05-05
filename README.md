@@ -52,5 +52,14 @@ Execute the following in the build directory:
 ## Linux
 ```
 export LD_LIBRARY_PATH=$VULKAN_SDK_PATH/lib/
+# for debug builds also include the next export
+export VK_LAYER_PATH=/$VULKAN_SDK_PATH/etc/vulkan/explicit_layer.d
 ./vkShmup
 ```
+
+# Troubleshooting
+
+## Vulkan support is incomplete
+
+Have a look at [this answer](https://askubuntu.com/questions/1196182/vulkan-psurfaceformatcount-is-zero-with-nvidia-drivers)
+TL/DR: Try `export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json`
