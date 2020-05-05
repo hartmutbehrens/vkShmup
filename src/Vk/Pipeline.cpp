@@ -29,28 +29,10 @@ const std::vector<vkShmup::Vertex> vertices = {
 
 
 namespace vkShmup {
-    bool Pipeline::checkValidationLayerSupport() {
-        uint32_t layerCount;
-        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-
-        std::vector<VkLayerProperties> availableLayers(layerCount);
-        vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-
-        std::set<std::string> requiredLayers(validationLayers.begin(), validationLayers.end());
-
-        for (const auto& layerProperties : availableLayers) {
-            requiredLayers.erase(layerProperties.layerName);
-        }
-
-        return requiredLayers.empty();
+    Pipeline::Pipeline(): Pipeline("application") {
     }
 
-    Pipeline::Pipeline() {
-        createInstance("application");
-    }
-
-    Pipeline::Pipeline(const char* name) {
-        createInstance(name);
+    Pipeline::Pipeline(const char* name): instance(Instance::create(name)) {
     }
 
     Pipeline::~Pipeline() {
@@ -69,11 +51,7 @@ namespace vkShmup {
         vkDestroyCommandPool(logicalDevice, commandPool, nullptr);
 
         vkDestroyDevice(logicalDevice, nullptr);
-#ifndef NDEBUG
-        DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-#endif
-        vkDestroySurfaceKHR(instance, surface, nullptr);
-        vkDestroyInstance(instance, nullptr);
+        vkDestroySurfaceKHR(instance->handle(), surface, nullptr);
     }
 
     std::unique_ptr<Pipeline> Pipeline::create(const char* name) {
@@ -81,9 +59,6 @@ namespace vkShmup {
     }
 
     void Pipeline::initVulkan(GLFWwindow* window) {
-#ifndef NDEBUG
-        setupDebugMessenger(debugCallback);
-#endif
         createSurface(window);
         pickPhysicalDevice();
         createLogicalDevice();
@@ -99,49 +74,12 @@ namespace vkShmup {
         createSyncObjects();
     }
 
-    VkInstance* Pipeline::instanceHandle() {
-        return &instance;
-    }
-
     VkPhysicalDevice* Pipeline::physicalDeviceHandle() {
         return &physicalDevice;
     }
 
     VkDevice* Pipeline::logicalDeviceHandle() {
         return &logicalDevice;
-    }
-
-    void Pipeline::createInstance(const char* name) {
-#ifndef NDEBUG
-        if (!checkValidationLayerSupport()) {
-            throw std::runtime_error("Validation layers requested, but not available!");
-        }
-#endif
-        VkApplicationInfo appInfo{};
-        appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        appInfo.pApplicationName = name;
-        appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.pEngineName = "No Engine";
-        appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.apiVersion = VK_API_VERSION_1_0;
-
-        VkInstanceCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-        createInfo.pApplicationInfo = &appInfo;
-
-        auto extensions = getRequiredExtensions();
-        createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-        createInfo.ppEnabledExtensionNames = extensions.data();
-#ifdef NDEBUG
-        createInfo.enabledLayerCount = 0;
-#else
-        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-        createInfo.ppEnabledLayerNames = validationLayers.data();
-#endif
-        if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-            throw std::runtime_error("Failed to create a Vulkan instance!");
-        }
-
     }
 
     std::vector<const char*> Pipeline::getRequiredExtensions() {
@@ -159,12 +97,12 @@ namespace vkShmup {
 
     void Pipeline::pickPhysicalDevice() {
         uint32_t deviceCount = 0;
-        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+        vkEnumeratePhysicalDevices(instance->handle(), &deviceCount, nullptr);
         if (deviceCount == 0) {
             throw std::runtime_error("Failed to find GPUs with Vulkan support!");
         }
         std::vector<VkPhysicalDevice> devices(deviceCount);
-        vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+        vkEnumeratePhysicalDevices(instance->handle(), &deviceCount, devices.data());
         for (const auto& d : devices) {
             if (isDeviceSuitable(d)) {
                 physicalDevice = d;
@@ -218,11 +156,11 @@ namespace vkShmup {
     }
 
     void Pipeline::createVMAllocator() {
-        vmAllocator = VMAllocator::create(instance, physicalDevice, logicalDevice);
+        vmAllocator = VMAllocator::create(instance->handle(), physicalDevice, logicalDevice);
     }
 
     void Pipeline::createSurface(GLFWwindow* window) {
-        if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
+        if (glfwCreateWindowSurface(instance->handle(), window, nullptr, &surface) != VK_SUCCESS) {
             throw std::runtime_error("failed to create window surface!");
         }
     }
@@ -786,47 +724,6 @@ namespace vkShmup {
         }
 
         return indices.isComplete() && extensionsSupported && swapChainAdequate && (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
-    }
-
-    VKAPI_ATTR VkBool32 VKAPI_CALL Pipeline::debugCallback(
-            VkDebugUtilsMessageSeverityFlagBitsEXT /*messageSeverity*/,
-            VkDebugUtilsMessageTypeFlagsEXT /*messageType*/,
-            const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-            void* /*pUserData*/) {
-
-        std::cerr << "Validation layer: " << pCallbackData->pMessage << std::endl;
-
-        return VK_FALSE;
-    }
-
-    template <typename T>
-    void Pipeline::setupDebugMessenger(T callback) {
-        VkDebugUtilsMessengerCreateInfoEXT createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-        createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-        createInfo.pfnUserCallback = callback;
-        createInfo.pUserData = nullptr; // Optional
-
-        if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-            throw std::runtime_error("Failed to set up debug messenger!");
-        }
-    }
-
-    VkResult Pipeline::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
-        auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-        if (func != nullptr) {
-            return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
-        } else {
-            return VK_ERROR_EXTENSION_NOT_PRESENT;
-        }
-    }
-
-    void Pipeline::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
-        auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-        if (func != nullptr) {
-            func(instance, debugMessenger, pAllocator);
-        }
     }
 
     Pipeline::QueueFamilyIndices Pipeline::findQueueFamilies(VkPhysicalDevice device) {

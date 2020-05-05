@@ -24,10 +24,11 @@ add_library(Core
         src/Core/Window.cpp)
 add_library(Vk
         third_party/VulkanMemoryAllocator/vk_mem_alloc.h
+        src/Vk/Instance.cpp
         src/Vk/Pipeline.cpp
         src/Vk/ShaderModule.cpp
         src/Vk/SyncObject.cpp
-        src/Vk/VMAllocator.cpp)
+        src/Vk/VMAllocator.cpp )
 
 include_directories(include
         third_party)

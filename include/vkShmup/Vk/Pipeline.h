@@ -9,6 +9,7 @@
 #include <memory>
 #include <optional>     // C++17
 #include <vector>
+#include "vkShmup/Vk/Instance.h"
 #include "vkShmup/Vk/VMAllocator.h"
 
 struct GLFWwindow;
@@ -49,13 +50,11 @@ namespace vkShmup {
         using unique_ptr = std::unique_ptr<Pipeline>;
         static unique_ptr create(const char* name);
         void initVulkan(GLFWwindow* window);
-        VkInstance* instanceHandle();
         VkPhysicalDevice* physicalDeviceHandle();
         VkDevice* logicalDeviceHandle();
         void pickPhysicalDevice();
         void createLogicalDevice();
         void createVMAllocator();
-        void createInstance(const char* name);
         void createSurface(GLFWwindow* window);
         void createSwapChain(GLFWwindow* window);
         void createImageViews();
@@ -96,20 +95,9 @@ namespace vkShmup {
         static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         bool isDeviceSuitable(VkPhysicalDevice device);
         static std::vector<const char*> getRequiredExtensions();
-        static bool checkValidationLayerSupport();
         uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
-        template <typename T>
-        void setupDebugMessenger(T callback);
-
-        static VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
-        static void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
-        static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-                VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                VkDebugUtilsMessageTypeFlagsEXT messageType,
-                const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                void* pUserData);
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
         static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -117,8 +105,8 @@ namespace vkShmup {
         static VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window);
         // members
 
-        VkInstance instance;
-        VkDebugUtilsMessengerEXT debugMessenger;
+
+        Instance::unique_ptr instance;
         VkSurfaceKHR surface;
 
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
