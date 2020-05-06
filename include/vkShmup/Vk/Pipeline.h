@@ -10,6 +10,7 @@
 #include <optional>     // C++17
 #include <vector>
 #include "vkShmup/Vk/Instance.h"
+#include "vkShmup/Vk/Surface.h"
 #include "vkShmup/Vk/VMAllocator.h"
 
 struct GLFWwindow;
@@ -55,7 +56,6 @@ namespace vkShmup {
         void pickPhysicalDevice();
         void createLogicalDevice();
         void createVMAllocator();
-        void createSurface(GLFWwindow* window);
         void createSwapChain(GLFWwindow* window);
         void createImageViews();
         void createRenderPass();
@@ -81,12 +81,6 @@ namespace vkShmup {
             }
         };
 
-        struct SwapChainSupportDetails {
-            VkSurfaceCapabilitiesKHR capabilities;
-            std::vector<VkSurfaceFormatKHR> formats;
-            std::vector<VkPresentModeKHR> presentModes;
-        };
-
     protected:
         Pipeline();
         explicit Pipeline(const char* name);
@@ -99,7 +93,6 @@ namespace vkShmup {
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
         static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         static VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
         static VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window);
@@ -107,7 +100,7 @@ namespace vkShmup {
 
 
         Instance::unique_ptr instance;
-        VkSurfaceKHR surface;
+        Surface::unique_ptr surface;
 
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
         VkDevice logicalDevice;

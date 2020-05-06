@@ -29,6 +29,7 @@ add_library(Vk
         src/Vk/PhysicalDevice.cpp
         src/Vk/Pipeline.cpp
         src/Vk/ShaderModule.cpp
+        src/Vk/Surface.cpp
         src/Vk/SyncObject.cpp
         src/Vk/VMAllocator.cpp )
 

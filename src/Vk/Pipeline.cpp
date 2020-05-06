@@ -51,7 +51,6 @@ namespace vkShmup {
         vkDestroyCommandPool(logicalDevice, commandPool, nullptr);
 
         vkDestroyDevice(logicalDevice, nullptr);
-        vkDestroySurfaceKHR(instance->handle(), surface, nullptr);
     }
 
     std::unique_ptr<Pipeline> Pipeline::create(const char* name) {
@@ -59,7 +58,7 @@ namespace vkShmup {
     }
 
     void Pipeline::initVulkan(GLFWwindow* window) {
-        createSurface(window);
+        surface = Surface::create(instance.get(), window);
         pickPhysicalDevice();
         createLogicalDevice();
         createVMAllocator();
@@ -159,14 +158,8 @@ namespace vkShmup {
         vmAllocator = VMAllocator::create(instance->handle(), physicalDevice, logicalDevice);
     }
 
-    void Pipeline::createSurface(GLFWwindow* window) {
-        if (glfwCreateWindowSurface(instance->handle(), window, nullptr, &surface) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create window surface!");
-        }
-    }
-
     void Pipeline::createSwapChain(GLFWwindow* window) {
-        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
+        SwapChainSupportDetails swapChainSupport = surface->querySwapChainSupport(physicalDevice);
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -179,7 +172,7 @@ namespace vkShmup {
 
         VkSwapchainCreateInfoKHR createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        createInfo.surface = surface;
+        createInfo.surface = surface->handle();
 
         createInfo.minImageCount = imageCount;
         createInfo.imageFormat = surfaceFormat.format;
@@ -719,7 +712,7 @@ namespace vkShmup {
         bool extensionsSupported = checkDeviceExtensionSupport(device);
         bool swapChainAdequate = false;
         if (extensionsSupported) {
-            SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+            SwapChainSupportDetails swapChainSupport = surface->querySwapChainSupport(device);
             swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
         }
 
@@ -741,9 +734,8 @@ namespace vkShmup {
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 indices.graphicsFamily = i;
             }
-            VkBool32 presentSupport = false;
-            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-            if (presentSupport) {
+
+            if (surface->hasPhysicalDeviceSurfaceSupport(device, i)) {
                 indices.presentFamily = i;
             }
             if (indices.isComplete()) {
@@ -752,27 +744,6 @@ namespace vkShmup {
             i++;
         }
         return indices;
-    }
-
-    Pipeline::SwapChainSupportDetails Pipeline::querySwapChainSupport(VkPhysicalDevice device) {
-        SwapChainSupportDetails details;
-        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
-
-        uint32_t formatCount;
-        vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
-        if (formatCount != 0) {
-            details.formats.resize(formatCount);
-            vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
-        }
-
-        uint32_t presentModeCount;
-        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
-        if (presentModeCount != 0) {
-            details.presentModes.resize(presentModeCount);
-            vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
-        }
-
-        return details;
     }
 
     VkSurfaceFormatKHR Pipeline::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) {

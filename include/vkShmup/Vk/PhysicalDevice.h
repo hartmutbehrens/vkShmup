@@ -40,7 +40,6 @@ namespace vkShmup {
         static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
         bool isDeviceSuitable(VkPhysicalDevice device);
-        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     };
 }
