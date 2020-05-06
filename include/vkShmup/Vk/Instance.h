@@ -26,6 +26,7 @@ namespace vkShmup {
                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                 void* pUserData);
         void destroyDebugUtilsMessengerEXT(const VkAllocationCallbacks* pAllocator);
+        std::vector<VkPhysicalDevice> enumerate_physical_devices();
         std::vector<const char*> getRequiredExtensions();
 
         void setupDebugMessenger();

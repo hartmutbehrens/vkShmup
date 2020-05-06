@@ -104,6 +104,18 @@ namespace vkShmup {
         }
     }
 
+    std::vector<VkPhysicalDevice> Instance::enumerate_physical_devices() {
+        uint32_t deviceCount = 0;
+        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+        if (deviceCount == 0) {
+            throw std::runtime_error("Failed to find GPUs with Vulkan support!");
+        }
+        std::vector<VkPhysicalDevice> devices(deviceCount);
+        vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+        // https://stackoverflow.com/questions/15704565/efficient-way-to-return-a-stdvector-in-c
+        return devices;
+    }
+
     std::vector<const char*> Instance::getRequiredExtensions() {
         uint32_t glfwExtensionCount = 0;
         const char** glfwExtensions;

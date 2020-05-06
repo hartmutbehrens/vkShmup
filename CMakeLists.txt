@@ -3,6 +3,7 @@ project(vkShmup VERSION 1.0.0)
 
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if (MSVC)
     # warning level 4 and all warnings as errors
     add_compile_options(/W4 /WX)
@@ -25,6 +26,7 @@ add_library(Core
 add_library(Vk
         third_party/VulkanMemoryAllocator/vk_mem_alloc.h
         src/Vk/Instance.cpp
+        src/Vk/PhysicalDevice.cpp
         src/Vk/Pipeline.cpp
         src/Vk/ShaderModule.cpp
         src/Vk/SyncObject.cpp
