@@ -60,9 +60,9 @@ namespace vkShmup {
 
     void Pipeline::initVulkan(GLFWwindow* window) {
         surface = Surface::create(instance.get(), window);
-        pickPhysicalDevice();
+        physicalDevice = PhysicalDevice::create(instance.get(), surface.get());
         createLogicalDevice();
-        createVMAllocator();
+        vmAllocator = VMAllocator::create(instance->handle(), physicalDevice->handle(), logicalDevice);
         createSwapChain(window);
         createImageViews();
         createRenderPass();
@@ -72,10 +72,6 @@ namespace vkShmup {
         createVertexBuffer();
         createCommandBuffers();
         createSyncObjects();
-    }
-
-    VkPhysicalDevice* Pipeline::physicalDeviceHandle() {
-        return &physicalDevice;
     }
 
     VkDevice* Pipeline::logicalDeviceHandle() {
@@ -95,28 +91,8 @@ namespace vkShmup {
         return extensions;
     }
 
-    void Pipeline::pickPhysicalDevice() {
-        uint32_t deviceCount = 0;
-        vkEnumeratePhysicalDevices(instance->handle(), &deviceCount, nullptr);
-        if (deviceCount == 0) {
-            throw std::runtime_error("Failed to find GPUs with Vulkan support!");
-        }
-        std::vector<VkPhysicalDevice> devices(deviceCount);
-        vkEnumeratePhysicalDevices(instance->handle(), &deviceCount, devices.data());
-        for (const auto& d : devices) {
-            if (isDeviceSuitable(d)) {
-                physicalDevice = d;
-                break;
-            }
-        }
-
-        if (physicalDevice == VK_NULL_HANDLE) {
-            throw std::runtime_error("Failed to find a suitable GPU!");
-        }
-    }
-
     void Pipeline::createLogicalDevice() {
-        QueueFamilyIndices indices = surface->findQueueFamilies(physicalDevice);
+        QueueFamilyIndices indices = surface->findQueueFamilies(physicalDevice->handle());
 
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
         std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
@@ -148,19 +124,15 @@ namespace vkShmup {
         createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         createInfo.ppEnabledLayerNames = validationLayers.data();
 #endif
-        if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
+        if (vkCreateDevice(physicalDevice->handle(), &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create logical device!");
         }
         vkGetDeviceQueue(logicalDevice, indices.graphicsFamily.value(), 0, &graphicsQueue);
         vkGetDeviceQueue(logicalDevice, indices.presentFamily.value(), 0, &presentQueue);
     }
 
-    void Pipeline::createVMAllocator() {
-        vmAllocator = VMAllocator::create(instance->handle(), physicalDevice, logicalDevice);
-    }
-
     void Pipeline::createSwapChain(GLFWwindow* window) {
-        SwapChainSupportDetails swapChainSupport = surface->querySwapChainSupport(physicalDevice);
+        SwapChainSupportDetails swapChainSupport = surface->querySwapChainSupport(physicalDevice->handle());
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -182,7 +154,7 @@ namespace vkShmup {
         createInfo.imageArrayLayers = 1;
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;    // render directly
 
-        auto indices = surface->findQueueFamilies(physicalDevice);
+        auto indices = surface->findQueueFamilies(physicalDevice->handle());
         uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
         if (indices.graphicsFamily != indices.presentFamily) {
@@ -453,7 +425,7 @@ namespace vkShmup {
 
     uint32_t Pipeline::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
         VkPhysicalDeviceMemoryProperties memProperties;
-        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+        vkGetPhysicalDeviceMemoryProperties(physicalDevice->handle(), &memProperties);
 
         for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
             if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
@@ -499,7 +471,7 @@ namespace vkShmup {
 
 
     void Pipeline::createCommandPool() {
-        auto queueFamilyIndices = surface->findQueueFamilies(physicalDevice);
+        auto queueFamilyIndices = surface->findQueueFamilies(physicalDevice->handle());
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -686,38 +658,6 @@ namespace vkShmup {
 
     void Pipeline::frameBufferResized() {
         framebufferResized = true;
-    }
-
-    bool Pipeline::checkDeviceExtensionSupport(VkPhysicalDevice device) {
-        uint32_t extensionCount;
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
-
-        std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
-
-        std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
-
-        for (const auto& extension : availableExtensions) {
-            requiredExtensions.erase(extension.extensionName);
-        }
-
-        return requiredExtensions.empty();
-    }
-
-    bool Pipeline::isDeviceSuitable(VkPhysicalDevice device) {
-        auto indices = surface->findQueueFamilies(device);
-
-        VkPhysicalDeviceProperties deviceProperties;
-        vkGetPhysicalDeviceProperties(device, &deviceProperties);
-
-        bool extensionsSupported = checkDeviceExtensionSupport(device);
-        bool swapChainAdequate = false;
-        if (extensionsSupported) {
-            SwapChainSupportDetails swapChainSupport = surface->querySwapChainSupport(device);
-            swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
-        }
-
-        return indices.isComplete() && extensionsSupported && swapChainAdequate && (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
     }
 
     VkSurfaceFormatKHR Pipeline::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) {

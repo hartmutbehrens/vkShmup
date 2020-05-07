@@ -42,7 +42,7 @@ namespace vkShmup {
             if (indices.isComplete()) {
                 break;
             }
-            i++;
+            ++i;
         }
         return indices;
     }
