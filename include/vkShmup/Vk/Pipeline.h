@@ -7,7 +7,6 @@
 #include <glm/glm.hpp>
 #include <array>
 #include <memory>
-#include <optional>     // C++17
 #include <vector>
 #include "vkShmup/Vk/Instance.h"
 #include "vkShmup/Vk/Surface.h"
@@ -72,15 +71,6 @@ namespace vkShmup {
         void frameBufferResized();
         ~Pipeline();
 
-        struct QueueFamilyIndices {
-            std::optional<uint32_t> graphicsFamily;
-            std::optional<uint32_t> presentFamily;
-
-            bool isComplete() {
-                return graphicsFamily.has_value() && presentFamily.has_value();
-            }
-        };
-
     protected:
         Pipeline();
         explicit Pipeline(const char* name);
@@ -92,7 +82,6 @@ namespace vkShmup {
         uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
-        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
         static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         static VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
         static VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window);

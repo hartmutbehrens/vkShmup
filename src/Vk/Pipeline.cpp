@@ -4,6 +4,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <set>
 #include <stdexcept>
@@ -115,7 +116,7 @@ namespace vkShmup {
     }
 
     void Pipeline::createLogicalDevice() {
-        QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+        QueueFamilyIndices indices = surface->findQueueFamilies(physicalDevice);
 
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
         std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
@@ -181,7 +182,7 @@ namespace vkShmup {
         createInfo.imageArrayLayers = 1;
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;    // render directly
 
-        QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+        auto indices = surface->findQueueFamilies(physicalDevice);
         uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
         if (indices.graphicsFamily != indices.presentFamily) {
@@ -498,7 +499,7 @@ namespace vkShmup {
 
 
     void Pipeline::createCommandPool() {
-        QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
+        auto queueFamilyIndices = surface->findQueueFamilies(physicalDevice);
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -704,7 +705,7 @@ namespace vkShmup {
     }
 
     bool Pipeline::isDeviceSuitable(VkPhysicalDevice device) {
-        QueueFamilyIndices indices = findQueueFamilies(device);
+        auto indices = surface->findQueueFamilies(device);
 
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -717,33 +718,6 @@ namespace vkShmup {
         }
 
         return indices.isComplete() && extensionsSupported && swapChainAdequate && (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
-    }
-
-    Pipeline::QueueFamilyIndices Pipeline::findQueueFamilies(VkPhysicalDevice device) {
-        QueueFamilyIndices indices;
-        // Assign index to queue families that could be found
-
-
-        uint32_t queueFamilyCount = 0;
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-        int i = 0;
-        for (const auto& queueFamily : queueFamilies) {
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-                indices.graphicsFamily = i;
-            }
-
-            if (surface->hasPhysicalDeviceSurfaceSupport(device, i)) {
-                indices.presentFamily = i;
-            }
-            if (indices.isComplete()) {
-                break;
-            }
-            i++;
-        }
-        return indices;
     }
 
     VkSurfaceFormatKHR Pipeline::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) {

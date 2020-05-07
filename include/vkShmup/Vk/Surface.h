@@ -6,11 +6,21 @@
 #define VKSHMUP_SURFACE_H
 
 #include <memory>
+#include <optional>
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 namespace vkShmup {
     class Instance;
+
+    struct QueueFamilyIndices {
+        std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> presentFamily;
+
+        bool isComplete() {
+            return graphicsFamily.has_value() && presentFamily.has_value();
+        }
+    };
 
     struct SwapChainSupportDetails {
         VkSurfaceCapabilitiesKHR capabilities;
@@ -24,6 +34,8 @@ namespace vkShmup {
         static unique_ptr create(Instance* i, GLFWwindow* window);
         [[nodiscard]] const VkSurfaceKHR& handle() const { return surface; }
         ~Surface();
+
+        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
         VkBool32 hasPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex);
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);

@@ -11,35 +11,22 @@
 
 namespace vkShmup {
     class Instance;
+    class Surface;
+
     class PhysicalDevice {
     public:
         using unique_ptr = std::unique_ptr<PhysicalDevice>;
-        static unique_ptr create(Instance* instance);
+        static unique_ptr create(Instance* instance, Surface* surface);
         [[nodiscard]] const VkPhysicalDevice& handle() const { return physicalDevice; }
         ~PhysicalDevice() = default;
 
     protected:
-        explicit PhysicalDevice(Instance* instance);
+        explicit PhysicalDevice(Instance* instance, Surface* surface);
 
     private:
-        struct QueueFamilyIndices {
-            std::optional<uint32_t> graphicsFamily;
-            std::optional<uint32_t> presentFamily;
-
-            bool isComplete() {
-                return graphicsFamily.has_value() && presentFamily.has_value();
-            }
-        };
-
-        struct SwapChainSupportDetails {
-            VkSurfaceCapabilitiesKHR capabilities;
-            std::vector<VkSurfaceFormatKHR> formats;
-            std::vector<VkPresentModeKHR> presentModes;
-        };
 
         static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-        bool isDeviceSuitable(VkPhysicalDevice device);
+        bool isDeviceSuitable(VkPhysicalDevice device, Surface* surface);
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     };
 }
