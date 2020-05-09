@@ -74,8 +74,6 @@ namespace vkShmup {
         explicit Pipeline(const char* name);
 
     private:
-        static std::vector<const char*> getRequiredExtensions();
-        uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
         static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);

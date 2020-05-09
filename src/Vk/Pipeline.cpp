@@ -78,19 +78,6 @@ namespace vkShmup {
         return &logicalDevice;
     }
 
-    std::vector<const char*> Pipeline::getRequiredExtensions() {
-        uint32_t glfwExtensionCount = 0;
-        const char** glfwExtensions;
-        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-        std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-#ifndef NDEBUG
-        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif
-
-        return extensions;
-    }
-
     void Pipeline::createLogicalDevice() {
         QueueFamilyIndices indices = surface->findQueueFamilies(physicalDevice->handle());
 
@@ -421,19 +408,6 @@ namespace vkShmup {
         copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
 
         vmaDestroyBuffer(vmAllocator->handle(), stagingBuffer, stagingBufferMemory);
-    }
-
-    uint32_t Pipeline::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
-        VkPhysicalDeviceMemoryProperties memProperties;
-        vkGetPhysicalDeviceMemoryProperties(physicalDevice->handle(), &memProperties);
-
-        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-                return i;
-            }
-        }
-
-        throw std::runtime_error("failed to find suitable memory type!");
     }
 
     void Pipeline::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
