@@ -10,6 +10,8 @@
 #include <GLFW/glfw3.h>
 
 namespace vkShmup {
+    extern const std::vector<const char*> validationLayers;
+
     class Instance {
     public:
         using unique_ptr = std::unique_ptr<Instance>;

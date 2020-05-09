@@ -10,6 +10,7 @@
 #include <vulkan/vulkan_core.h>
 
 namespace vkShmup {
+    extern const std::vector<const char*> deviceExtensions;
     class Instance;
     class Surface;
 

@@ -87,7 +87,7 @@ namespace vkShmup {
         PhysicalDevice::unique_ptr physicalDevice;
 
         VkDevice logicalDevice;
-        VMAllocator::unique_ptr vmAllocator = nullptr;
+        VMAllocator::unique_ptr vmAllocator;
 
         VkQueue graphicsQueue;
         VkQueue presentQueue;
@@ -109,8 +109,8 @@ namespace vkShmup {
         std::vector<VkSemaphore> renderFinishedSemaphores;
         std::vector<VkFence> inFlightFences;
         std::vector<VkFence> imagesInFlight;
-        size_t currentFrame = 0;
-        bool framebufferResized = false;
+        size_t currentFrame;
+        bool framebufferResized;
     };
 }
 

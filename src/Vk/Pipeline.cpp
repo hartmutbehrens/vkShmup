@@ -12,14 +12,6 @@
 #include "vkShmup/Vk/ShaderModule.h"
 #include "vkShmup/Core/Window.h"
 
-const std::vector<const char*> validationLayers = {
-        "VK_LAYER_KHRONOS_validation"
-};
-
-const std::vector<const char*> deviceExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
-
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
 const std::vector<vkShmup::Vertex> vertices = {
@@ -33,7 +25,11 @@ namespace vkShmup {
     Pipeline::Pipeline(): Pipeline("application") {
     }
 
-    Pipeline::Pipeline(const char* name): instance(Instance::create(name)) {
+    Pipeline::Pipeline(const char* name):
+    instance(Instance::create(name)),
+    vmAllocator(nullptr),
+    currentFrame(0),
+    framebufferResized(false) {
     }
 
     Pipeline::~Pipeline() {
