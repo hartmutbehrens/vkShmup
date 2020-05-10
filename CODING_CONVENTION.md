@@ -27,9 +27,21 @@ This document is mainly here to remind myself of proper guidelines.
 - Use a non-const `shared_ptr&` parameter only to modify the `shared_ptr`.
 - Use a `const shared_ptr&` as a parameter only if you’re not sure whether or not you’ll take a copy and share ownership; otherwise use `widget*` instead (or if not nullable, a `widget&`).
 
+See [GotW 91](https://herbsutter.com/2013/06/05/gotw-91-solution-smart-pointer-parameters/) for further explanation of these guidelines.
+
 ## Moving
 
 - To pass a named object `a` as an argument to a && “move” parameter (rvalue reference parameter), write `std::move(a)`. 
 - That’s pretty much the only time you should write `std::move`.
 
-See [GotW 91](https://herbsutter.com/2013/06/05/gotw-91-solution-smart-pointer-parameters/) for further explanation of these guidelines.
+## Hierarchy Lifetime
+- Use `shared_ptr` to express object lifetime upwards.
+```c++
+// a <-- b <-- c
+// "<--"in the diagram above indicates a shared_ptr
+std::shared_ptr<B> b;
+b = a->createB();
+std::shared_ptr<C> c;
+c = b->createC();
+```
+In the example above `a` must not be deleted before `b` or `c`.
