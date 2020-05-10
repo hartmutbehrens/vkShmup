@@ -1,4 +1,4 @@
-#Coding Conventions
+# Coding Conventions
 
 This document is mainly here to remind myself of proper guidelines.
 
