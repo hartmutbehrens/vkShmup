@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(vkShmup VERSION 1.0.0)
 
-set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if (MSVC)
@@ -52,3 +52,20 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/GLSL ${CMAKE_CURRENT_BINARY_DIR}/GLSL
         COMMENT "Copying shaders" VERBATIM)
+
+
+# CppUTest
+include(FetchContent)
+FetchContent_Declare(
+        CppUTest
+        GIT_REPOSITORY https://github.com/cpputest/cpputest.git
+        GIT_TAG        latest-passing-build # or use release tag, eg. v3.8
+)
+# Set this to ON if you want to have the CppUTests in your project as well.
+set(TESTS OFF CACHE BOOL "Switch off CppUTest Test build")
+FetchContent_MakeAvailable(CppUTest)
+
+add_executable(run_tests
+        tests/AllTests.cpp
+        tests/TestApp.cpp)
+target_link_libraries(run_tests PRIVATE CppUTest CppUTestExt Core Vk glfw vulkan)
