@@ -38,7 +38,9 @@ See [GotW 91](https://herbsutter.com/2013/06/05/gotw-91-solution-smart-pointer-p
 - To pass a named object `a` as an argument to a && “move” parameter (rvalue reference parameter), write `std::move(a)`. 
 - That’s pretty much the only time you should write `std::move`.
 
-## Hierarchy Lifetime
+## Hierarchies
+
+### Lifetime
 - Use `shared_ptr` to express object lifetime upwards.
 ```c++
 // a <-- b <-- c
@@ -49,6 +51,10 @@ std::shared_ptr<C> c;
 c = b->createC();
 ```
 In the example above `a` must not be deleted before `b` or `c`.
+
+### Navigation
+- Use `dynamic_cast` to a pointer type when a pointer to an object of a different derived class is a valid argument (test result against `nullptr`).
+- if a different type is unacceptable than cast to a reference type. `bad_cast` will be thrown if it is not of the type.
 
 ## Allocating Objects
 
