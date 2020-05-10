@@ -1,6 +1,10 @@
-#Coding Convetions
+#Coding Conventions
 
 This document is mainly here to remind myself of proper guidelines.
+
+## General
+- Use pre-increment (prevents unnecessary copies where objects are involved - e.g. iterator)
+- Use uniform initialization syntax (brace-initialization) - prevents unintended function definition (aka c++'s [most vexing parse](https://en.wikipedia.org/wiki/Most_vexing_parse)).
 
 ## Parameter Passing
 - Prefer [simple and conventional](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rf-conventional) ways of passing parameters
@@ -45,3 +49,25 @@ std::shared_ptr<C> c;
 c = b->createC();
 ```
 In the example above `a` must not be deleted before `b` or `c`.
+
+## Allocating Objects
+
+- Where possible, define classes with static (class) factory methods that allocate the object with new and returns a smart pointer.
+- This practice prevents raw C pointers from ever escaping to the calling code, and thus avoids the potential for a dangling pointer.
+```
+	class Widget {
+	protected:
+	   // Protected constructor
+	   Widget();
+	   ...
+	public:
+	   // Static “factory” method
+	   static std::shared_ptr<Widget> create();
+	};
+	
+	Widget::Widget() { ... }
+	
+	std::shared_ptr<Widget> Widget::create() {
+	   return std::shared_ptr<Widget>(new Widget());
+	}
+```
