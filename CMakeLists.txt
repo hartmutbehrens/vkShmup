@@ -65,7 +65,6 @@ add_library(Core
 add_library(Tracy
         tracy/TracyClient.cpp)
 add_library(Vk
-        third_party/VulkanMemoryAllocator/vk_mem_alloc.h
         src/Vk/Instance.cpp
         src/Vk/PhysicalDevice.cpp
         src/Vk/Pipeline.cpp
@@ -75,7 +74,7 @@ add_library(Vk
         src/Vk/VMAllocator.cpp )
 
 include_directories(include
-        third_party)
+        VulkanMemoryAllocator/src)
 
 add_executable(vkShmup
         src/main.cpp)

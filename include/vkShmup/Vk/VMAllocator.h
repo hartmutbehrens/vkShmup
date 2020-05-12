@@ -6,7 +6,7 @@
 #define VKSHMUP_VMALLOCATOR_H
 
 #include <memory>
-#include "VulkanMemoryAllocator/vk_mem_alloc.h"
+#include <vk_mem_alloc.h>
 
 namespace vkShmup {
     class VMAllocator {
