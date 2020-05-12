@@ -40,7 +40,7 @@ set(CMAKE_CXX_FLAGS_UBSAN
         CACHE STRING "Flags used by the C++ compiler during UndefinedBehaviourSanitizer builds."
         FORCE)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_ASAN}")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_ASAN}")
 
 if (MSVC)
     # warning level 4 and all warnings as errors
