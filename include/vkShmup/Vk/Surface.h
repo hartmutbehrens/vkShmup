@@ -11,7 +11,6 @@
 #include <GLFW/glfw3.h>
 
 namespace vkShmup {
-    class Instance;
 
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily;
@@ -28,10 +27,10 @@ namespace vkShmup {
         std::vector<VkPresentModeKHR> presentModes;
     };
 
+    class Instance;
     class Surface {
     public:
-        using unique_ptr = std::unique_ptr<Surface>;
-        static unique_ptr create(Instance* i, GLFWwindow* window);
+        static std::shared_ptr<Surface> create(std::shared_ptr<Instance> i, GLFWwindow* window);
         [[nodiscard]] const VkSurfaceKHR& handle() const { return surface; }
         ~Surface();
 
@@ -41,10 +40,10 @@ namespace vkShmup {
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
     protected:
-        explicit Surface(Instance* i, GLFWwindow* window);
+        explicit Surface(std::shared_ptr<Instance> i, GLFWwindow* window);
 
     private:
-        Instance* instance;
+        std::shared_ptr<Instance> instance;
         VkSurfaceKHR surface;
     };
 

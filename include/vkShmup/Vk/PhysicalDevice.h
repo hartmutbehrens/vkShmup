@@ -16,8 +16,7 @@ namespace vkShmup {
 
     class PhysicalDevice {
     public:
-        using unique_ptr = std::unique_ptr<PhysicalDevice>;
-        static unique_ptr create(Instance* instance, Surface* surface);
+        static std::unique_ptr<PhysicalDevice> create(Instance* instance, Surface* surface);
         [[nodiscard]] const VkPhysicalDevice& handle() const { return physicalDevice; }
         ~PhysicalDevice() = default;
 

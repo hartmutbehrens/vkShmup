@@ -6,11 +6,11 @@
 
 namespace vkShmup {
 
-    Surface::unique_ptr Surface::create(Instance* i, GLFWwindow* window) {
-        return unique_ptr(new Surface(i, window));
+    std::shared_ptr<Surface> Surface::create(std::shared_ptr<Instance> i, GLFWwindow* window) {
+        return std::shared_ptr<Surface>(new Surface(i, window));
     }
 
-    Surface::Surface(Instance* i, GLFWwindow* window): instance(i) {
+    Surface::Surface(std::shared_ptr<Instance> i, GLFWwindow* window): instance(i) {
         if (glfwCreateWindowSurface(instance->handle(), window, nullptr, &surface) != VK_SUCCESS) {
             throw std::runtime_error("failed to create window surface!");
         }

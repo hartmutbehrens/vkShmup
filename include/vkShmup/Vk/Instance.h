@@ -12,10 +12,10 @@
 namespace vkShmup {
     extern const std::vector<const char*> validationLayers;
 
-    class Instance {
+    class Surface;
+    class Instance: public std::enable_shared_from_this<Instance> {
     public:
-        using unique_ptr = std::unique_ptr<Instance>;
-        static unique_ptr create(const char* name);
+        static std::shared_ptr<Instance> create(const char* name);
         [[nodiscard]] const VkInstance& handle() const { return instance; }
         ~Instance();
 
@@ -30,6 +30,7 @@ namespace vkShmup {
         void destroyDebugUtilsMessengerEXT(const VkAllocationCallbacks* pAllocator);
         std::vector<VkPhysicalDevice> enumerate_physical_devices();
         std::vector<const char*> getRequiredExtensions();
+        std::shared_ptr<Surface> getSurface(GLFWwindow* window);
 
         void setupDebugMessenger();
 

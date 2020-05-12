@@ -2,6 +2,7 @@
 // Created by hartmut on 2020/05/05.
 //
 #include "vkShmup/Vk/Instance.h"
+#include "vkShmup/Vk/Surface.h"
 #include <iostream>
 #include <set>
 
@@ -11,8 +12,8 @@ namespace vkShmup {
             "VK_LAYER_KHRONOS_validation"
     };
 
-    Instance::unique_ptr Instance::create(const char* name) {
-        return Instance::unique_ptr(new Instance(name));
+    std::shared_ptr<Instance> Instance::create(const char* name) {
+        return std::shared_ptr<Instance>{new Instance(name)};
     }
 
     Instance::Instance(const char* name) {
@@ -126,6 +127,10 @@ namespace vkShmup {
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
         return extensions;
+    }
+
+    std::shared_ptr<Surface> Instance::getSurface(GLFWwindow *window) {
+        return Surface::create(shared_from_this(), window);
     }
 
     void Instance::setupDebugMessenger() {

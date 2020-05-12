@@ -13,9 +13,9 @@ namespace vkShmup {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
 
-    PhysicalDevice::unique_ptr PhysicalDevice::create(vkShmup::Instance *instance, Surface* surface) {
+    std::unique_ptr<PhysicalDevice> PhysicalDevice::create(vkShmup::Instance *instance, Surface* surface) {
         assert(instance != nullptr);
-        return PhysicalDevice::unique_ptr(new PhysicalDevice(instance, surface));
+        return std::unique_ptr<PhysicalDevice>(new PhysicalDevice(instance, surface));
     }
 
     PhysicalDevice::PhysicalDevice(Instance* instance, Surface* surface)  {

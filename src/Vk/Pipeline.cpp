@@ -8,8 +8,11 @@
 #include <iostream>
 #include <set>
 #include <stdexcept>
+#include "vkShmup/Vk/Instance.h"
 #include "vkShmup/Vk/Pipeline.h"
+#include "vkShmup/Vk/PhysicalDevice.h"
 #include "vkShmup/Vk/ShaderModule.h"
+#include "vkShmup/Vk/Surface.h"
 #include "vkShmup/Core/Window.h"
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
@@ -55,7 +58,7 @@ namespace vkShmup {
     }
 
     void Pipeline::initVulkan(GLFWwindow* window) {
-        surface = Surface::create(instance.get(), window);
+        surface = instance->getSurface(window);
         physicalDevice = PhysicalDevice::create(instance.get(), surface.get());
         createLogicalDevice();
         vmAllocator = VMAllocator::create(instance->handle(), physicalDevice->handle(), logicalDevice);

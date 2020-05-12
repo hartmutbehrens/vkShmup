@@ -8,9 +8,6 @@
 #include <array>
 #include <memory>
 #include <vector>
-#include "vkShmup/Vk/Instance.h"
-#include "vkShmup/Vk/PhysicalDevice.h"
-#include "vkShmup/Vk/Surface.h"
 #include "vkShmup/Vk/VMAllocator.h"
 
 struct GLFWwindow;
@@ -45,7 +42,11 @@ namespace vkShmup {
         }
     };
 
+    class Instance;
+    class Surface;
     class Window;
+    class PhysicalDevice;
+
     class Pipeline {
     public:
         using unique_ptr = std::unique_ptr<Pipeline>;
@@ -82,9 +83,9 @@ namespace vkShmup {
         // members
 
 
-        Instance::unique_ptr instance;
-        Surface::unique_ptr surface;
-        PhysicalDevice::unique_ptr physicalDevice;
+        std::shared_ptr<Instance> instance;
+        std::shared_ptr<Surface> surface;
+        std::unique_ptr<PhysicalDevice> physicalDevice;
 
         VkDevice logicalDevice;
         VMAllocator::unique_ptr vmAllocator;

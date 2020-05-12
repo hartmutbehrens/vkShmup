@@ -29,7 +29,10 @@ namespace vkShmup {
 
     void Application::framebufferResizeCallback(GLFWwindow* window, int /*width*/, int /*height*/) {
         auto p = reinterpret_cast<Pipeline*>(glfwGetWindowUserPointer(window));
-        p->frameBufferResized();
+        if (p != nullptr) {
+            p->frameBufferResized();
+        }
+
     }
 
 } // namespace vkShmup
