@@ -57,6 +57,17 @@ export VK_LAYER_PATH=/$VULKAN_SDK_PATH/etc/vulkan/explicit_layer.d
 ./vkShmup
 ```
 
+# Tracy
+
+[Tracy](https://github.com/wolfpld/tracy) is integrated into the application.
+To build, install the prerequisite libraries:
+```
+sudo apt install libfreetype-dev libcapstone-dev libtbb-dev libgtk2.0-dev
+```
+Edit the `build.mk` file found at `tracy/profiler/build/unix` and add `-lX11` to the line starting with `LIBS`.
+Build the profiler by executing `make release`. Start the profiler by executing `./Tracy-release` and hitting `Connect`. 
+Then run the application to start capturing traces.
+
 # Troubleshooting
 
 ## Vulkan support is incomplete

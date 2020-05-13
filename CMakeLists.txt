@@ -41,14 +41,14 @@ set(CMAKE_CXX_FLAGS_UBSAN
         FORCE)
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_ASAN}")
-# add_compile_definitions(TRACY_ENABLE)
+add_compile_definitions(TRACY_ENABLE)
 
 if (MSVC)
     # warning level 4 and all warnings as errors
     add_compile_options(/W4 /WX)
 else()
     # lots of warnings and all warnings as errors
-    add_compile_options(-Wall -Werror)
+    add_compile_options(-Wall)
 endif()
 # check for VULKAN_SDK_PATH path variable or set a default..
 set(VULKAN_SDK_PATH $ENV{VULKAN_SDK_PATH})
@@ -62,8 +62,6 @@ find_package(glfw3 3.3 REQUIRED)
 add_library(Core
         src/Core/Application.cpp
         src/Core/Window.cpp)
-add_library(Tracy
-        tracy/TracyClient.cpp)
 add_library(Vk
         src/Vk/Instance.cpp
         src/Vk/PhysicalDevice.cpp
@@ -77,9 +75,10 @@ include_directories(include
         VulkanMemoryAllocator/src)
 
 add_executable(vkShmup
+        tracy/TracyClient.cpp
         src/main.cpp)
 link_directories(${VULKAN_SDK_PATH}/include)
-target_link_libraries(vkShmup Core Vk Tracy glfw vulkan)
+target_link_libraries(vkShmup Core Vk glfw vulkan)
 
 # TODO: this only works on Linux for now..
 add_custom_command(
