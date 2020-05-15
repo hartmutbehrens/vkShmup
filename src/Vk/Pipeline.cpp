@@ -78,7 +78,7 @@ namespace vkShmup {
     }
 
     void Pipeline::createLogicalDevice() {
-        QueueFamilyIndices indices = surface->findQueueFamilies(physicalDevice->handle());
+        QueueFamilyIndices indices = physicalDevice->getQueueFamilies();
 
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
         std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
@@ -140,7 +140,7 @@ namespace vkShmup {
         createInfo.imageArrayLayers = 1;
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;    // render directly
 
-        auto indices = surface->findQueueFamilies(physicalDevice->handle());
+        auto indices = physicalDevice->getQueueFamilies();
         uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
         if (indices.graphicsFamily != indices.presentFamily) {
@@ -446,7 +446,7 @@ namespace vkShmup {
 
 
     void Pipeline::createCommandPool() {
-        auto queueFamilyIndices = surface->findQueueFamilies(physicalDevice->handle());
+        auto queueFamilyIndices = physicalDevice->getQueueFamilies();
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;

@@ -20,8 +20,10 @@ namespace vkShmup {
 
     PhysicalDevice::PhysicalDevice(Instance* instance, Surface* surface)  {
         for (const auto& d : instance->enumerate_physical_devices()) {
-            if (isDeviceSuitable(d, surface)) {
+            auto indices = findQueueFamilies(d, surface);
+            if (isDeviceSuitable(d, indices, surface)) {
                 physicalDevice = d;
+                queueIndices = indices;
                 break;
             }
         }
@@ -29,6 +31,10 @@ namespace vkShmup {
         if (physicalDevice == VK_NULL_HANDLE) {
             throw std::runtime_error("Failed to find a suitable GPU!");
         }
+    }
+
+    QueueFamilyIndices PhysicalDevice::getQueueFamilies() {
+        return queueIndices;
     }
 
     bool PhysicalDevice::checkDeviceExtensionSupport(VkPhysicalDevice device) {
@@ -47,8 +53,40 @@ namespace vkShmup {
         return requiredExtensions.empty();
     }
 
-    bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice device, Surface* surface) {
-        auto indices = surface->findQueueFamilies(device);
+    QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice device, Surface* surface) {
+        QueueFamilyIndices indices;
+        // Assign index to queue families that could be found
+
+
+        uint32_t queueFamilyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+        int i = 0;
+        for (const auto& queueFamily : queueFamilies) {
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                indices.graphicsFamily = i;
+            }
+
+            if (hasPhysicalDeviceSurfaceSupport(device, surface, i)) {
+                indices.presentFamily = i;
+            }
+            if (indices.isComplete()) {
+                break;
+            }
+            ++i;
+        }
+        return indices;
+    }
+
+    VkBool32 PhysicalDevice::hasPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, Surface* surface, uint32_t queueFamilyIndex) {
+        VkBool32 presentSupport = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface->handle(), &presentSupport);
+        return presentSupport;
+    }
+
+    bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice device, QueueFamilyIndices indices, Surface* surface) {
 
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(device, &deviceProperties);

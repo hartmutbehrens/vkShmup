@@ -20,38 +20,6 @@ namespace vkShmup {
         vkDestroySurfaceKHR(instance->handle(), surface, nullptr);
     }
 
-    QueueFamilyIndices Surface::findQueueFamilies(VkPhysicalDevice device) {
-        QueueFamilyIndices indices;
-        // Assign index to queue families that could be found
-
-
-        uint32_t queueFamilyCount = 0;
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-        int i = 0;
-        for (const auto& queueFamily : queueFamilies) {
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-                indices.graphicsFamily = i;
-            }
-
-            if (hasPhysicalDeviceSurfaceSupport(device, i)) {
-                indices.presentFamily = i;
-            }
-            if (indices.isComplete()) {
-                break;
-            }
-            ++i;
-        }
-        return indices;
-    }
-
-    VkBool32 Surface::hasPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
-        VkBool32 presentSupport = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, &presentSupport);
-        return presentSupport;
-    }
 
     SwapChainSupportDetails Surface::querySwapChainSupport(VkPhysicalDevice device) {
         SwapChainSupportDetails details;

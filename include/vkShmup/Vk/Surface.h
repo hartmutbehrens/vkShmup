@@ -12,15 +12,6 @@
 
 namespace vkShmup {
 
-    struct QueueFamilyIndices {
-        std::optional<uint32_t> graphicsFamily;
-        std::optional<uint32_t> presentFamily;
-
-        bool isComplete() {
-            return graphicsFamily.has_value() && presentFamily.has_value();
-        }
-    };
-
     struct SwapChainSupportDetails {
         VkSurfaceCapabilitiesKHR capabilities;
         std::vector<VkSurfaceFormatKHR> formats;
@@ -34,9 +25,6 @@ namespace vkShmup {
         [[nodiscard]] const VkSurfaceKHR& handle() const { return surface; }
         ~Surface();
 
-        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-
-        VkBool32 hasPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex);
         SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
     protected:
