@@ -355,6 +355,9 @@ namespace vkShmup {
         VmaAllocationCreateInfo stagingAllocInfo = {};
         // TODO: this is doing a very bad type of memory allocation (see https://developer.nvidia.com/vulkan-memory-management)
         // TODO: fix
+        // TODO: you should allocate multiple resources like buffers from a single memory allocation, but in fact you should go a step further.
+        //  Driver developers recommend that you also store multiple buffers, like the vertex and index buffer, into a single VkBuffer and use
+        //  offsets in commands like vkCmdBindVertexBuffers. The advantage is that your data is more cache friendly in that case, because it's closer together.
         stagingAllocInfo.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, stagingAllocInfo, stagingBuffer, stagingBufferMemory);
 
