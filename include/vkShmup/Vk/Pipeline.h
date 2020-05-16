@@ -60,6 +60,7 @@ namespace vkShmup {
         void createFramebuffers();
         void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VmaAllocationCreateInfo allocInfo, VkBuffer& buffer, VmaAllocation& bufferMemory);
         void createVertexBuffer();
+        void createIndexBuffer();
         void createCommandPool();
         void createCommandBuffers();
         void createSyncObjects();
@@ -98,8 +99,12 @@ namespace vkShmup {
         VkRenderPass renderPass;
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
+
         VkBuffer vertexBuffer;
         VmaAllocation vertexBufferMemory;
+        VkBuffer indexBuffer;
+        VmaAllocation indexBufferMemory;
+
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
         std::vector<VkSemaphore> imageAvailableSemaphores;
