@@ -11,6 +11,8 @@
 
 namespace vkShmup {
     extern const std::vector<const char*> deviceExtensions;
+
+    class Device;
     class Instance;
     class Surface;
 
@@ -23,9 +25,10 @@ namespace vkShmup {
         }
     };
 
-    class PhysicalDevice {
+    class PhysicalDevice: public std::enable_shared_from_this<PhysicalDevice> {
     public:
         static std::shared_ptr<PhysicalDevice> create(std::shared_ptr<Instance> i, Surface* surface);
+        std::shared_ptr<Device> createDevice();
         [[nodiscard]] const VkPhysicalDevice& handle() const { return physicalDevice; }
         ~PhysicalDevice() = default;
 

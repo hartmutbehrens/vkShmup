@@ -59,7 +59,7 @@ namespace vkShmup {
     void Pipeline::initVulkan(GLFWwindow* window) {
         surface = instance->getSurface(window);
         physicalDevice = instance->getPhysicalDevice(surface.get());
-        device = Device::create(physicalDevice);
+        device = physicalDevice->createDevice();
         // createLogicalDevice();
         vmAllocator = VMAllocator::create(instance->handle(), physicalDevice->handle(), device->handle());
         createSwapChain(window);

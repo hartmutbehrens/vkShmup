@@ -4,6 +4,7 @@
 #include <cassert>
 #include <set>
 #include <string>
+#include "vkShmup/Vk/Device.h"
 #include "vkShmup/Vk/Instance.h"
 #include "vkShmup/Vk/PhysicalDevice.h"
 #include "vkShmup/Vk/Surface.h"
@@ -16,6 +17,10 @@ namespace vkShmup {
     std::shared_ptr<PhysicalDevice> PhysicalDevice::create(std::shared_ptr<Instance> i, Surface* surface) {
         assert(i != nullptr);
         return std::shared_ptr<PhysicalDevice>(new PhysicalDevice(i, surface));
+    }
+
+    std::shared_ptr<Device> PhysicalDevice::createDevice() {
+        return Device::create(shared_from_this());
     }
 
     PhysicalDevice::PhysicalDevice(std::shared_ptr<Instance> i, Surface* surface): instance(i)  {
