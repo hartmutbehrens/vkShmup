@@ -26,7 +26,7 @@ namespace vkShmup {
             glfwPollEvents();
             pipeline->drawFrame(window->handle());
         }
-        vkDeviceWaitIdle(*pipeline->logicalDeviceHandle());
+        vkDeviceWaitIdle(pipeline->deviceHandle());
     }
 
     void Application::framebufferResizeCallback(GLFWwindow* window, int /*width*/, int /*height*/) {

@@ -42,18 +42,17 @@ namespace vkShmup {
         }
     };
 
+    class Device;
     class Instance;
+    class PhysicalDevice;
     class Surface;
     class Window;
-    class PhysicalDevice;
 
     class Pipeline {
     public:
         using unique_ptr = std::unique_ptr<Pipeline>;
         static unique_ptr create(const char* name);
         void initVulkan(GLFWwindow* window);
-        VkDevice* logicalDeviceHandle();
-        void createLogicalDevice();
         void createSwapChain(GLFWwindow* window);
         void createImageViews();
         void createRenderPass();
@@ -64,6 +63,7 @@ namespace vkShmup {
         void createCommandPool();
         void createCommandBuffers();
         void createSyncObjects();
+        const VkDevice& deviceHandle();
         void drawFrame(GLFWwindow* window);
         void cleanupSwapChain();
         void recreateSwapChain(GLFWwindow* window);
@@ -86,12 +86,8 @@ namespace vkShmup {
         std::shared_ptr<Instance> instance;
         std::shared_ptr<Surface> surface;
         std::shared_ptr<PhysicalDevice> physicalDevice;
-
-        VkDevice logicalDevice;
+        std::shared_ptr<Device> device;
         VMAllocator::unique_ptr vmAllocator;
-
-        VkQueue graphicsQueue;
-        VkQueue presentQueue;
 
         VkSwapchainKHR swapChain;
         std::vector<VkImage> swapChainImages;

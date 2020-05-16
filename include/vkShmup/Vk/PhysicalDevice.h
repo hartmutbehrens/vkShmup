@@ -32,7 +32,7 @@ namespace vkShmup {
         QueueFamilyIndices getQueueFamilies();
 
     protected:
-        explicit PhysicalDevice(std::shared_ptr<Instance> i, Surface* surface);
+        PhysicalDevice(std::shared_ptr<Instance> i, Surface* surface);
 
     private:
 

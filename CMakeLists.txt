@@ -63,13 +63,14 @@ add_library(Core
         src/Core/Application.cpp
         src/Core/Window.cpp)
 add_library(Vk
+        src/Vk/Device.cpp
         src/Vk/Instance.cpp
         src/Vk/PhysicalDevice.cpp
         src/Vk/Pipeline.cpp
         src/Vk/ShaderModule.cpp
         src/Vk/Surface.cpp
         src/Vk/SyncObject.cpp
-        src/Vk/VMAllocator.cpp )
+        src/Vk/VMAllocator.cpp)
 
 include_directories(include
         VulkanMemoryAllocator/src)
