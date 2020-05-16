@@ -31,7 +31,7 @@ namespace vkShmup {
         void destroyDebugUtilsMessengerEXT(const VkAllocationCallbacks* pAllocator);
         std::vector<VkPhysicalDevice> enumerate_physical_devices();
         std::shared_ptr<PhysicalDevice> getPhysicalDevice(Surface* surface);
-        std::vector<const char*> getRequiredExtensions();
+        static std::vector<const char*> getRequiredExtensions();
         std::shared_ptr<Surface> getSurface(GLFWwindow* window);
 
         void setupDebugMessenger();

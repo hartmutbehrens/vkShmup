@@ -37,9 +37,9 @@ namespace vkShmup {
     private:
 
         static bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, Surface* surface);
-        VkBool32 hasPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, Surface* surface, uint32_t queueFamilyIndex);
-        bool isDeviceSuitable(VkPhysicalDevice device, QueueFamilyIndices indices, Surface* surface);
+        static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, Surface* surface);
+        static VkBool32 hasPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, Surface* surface, uint32_t queueFamilyIndex);
+        static bool isDeviceSuitable(VkPhysicalDevice device, QueueFamilyIndices indices, Surface* surface);
 
         std::shared_ptr<Instance> instance;
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;

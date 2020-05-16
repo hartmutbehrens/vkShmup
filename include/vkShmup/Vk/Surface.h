@@ -32,7 +32,7 @@ namespace vkShmup {
 
     private:
         std::shared_ptr<Instance> instance;
-        VkSurfaceKHR surface;
+        VkSurfaceKHR surface = nullptr;
     };
 
 }

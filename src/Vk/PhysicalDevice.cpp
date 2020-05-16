@@ -80,9 +80,9 @@ namespace vkShmup {
         return indices;
     }
 
-    VkBool32 PhysicalDevice::hasPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, Surface* surface, uint32_t queueFamilyIndex) {
+    VkBool32 PhysicalDevice::hasPhysicalDeviceSurfaceSupport(VkPhysicalDevice device, Surface* surface, uint32_t queueFamilyIndex) {
         VkBool32 presentSupport = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface->handle(), &presentSupport);
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, queueFamilyIndex, surface->handle(), &presentSupport);
         return presentSupport;
     }
 
