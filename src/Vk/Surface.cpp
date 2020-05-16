@@ -21,7 +21,7 @@ namespace vkShmup {
     }
 
 
-    SwapChainSupportDetails Surface::querySwapChainSupport(VkPhysicalDevice device) {
+    SwapChainSupportDetails Surface::querySwapChainSupport(VkPhysicalDevice device) const {
         SwapChainSupportDetails details;
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
 

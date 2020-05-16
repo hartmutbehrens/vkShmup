@@ -85,7 +85,7 @@ namespace vkShmup {
 
         std::shared_ptr<Instance> instance;
         std::shared_ptr<Surface> surface;
-        std::unique_ptr<PhysicalDevice> physicalDevice;
+        std::shared_ptr<PhysicalDevice> physicalDevice;
 
         VkDevice logicalDevice;
         VMAllocator::unique_ptr vmAllocator;

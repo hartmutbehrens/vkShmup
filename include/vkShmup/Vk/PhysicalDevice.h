@@ -25,14 +25,14 @@ namespace vkShmup {
 
     class PhysicalDevice {
     public:
-        static std::unique_ptr<PhysicalDevice> create(Instance* instance, Surface* surface);
+        static std::shared_ptr<PhysicalDevice> create(std::shared_ptr<Instance> i, Surface* surface);
         [[nodiscard]] const VkPhysicalDevice& handle() const { return physicalDevice; }
         ~PhysicalDevice() = default;
 
         QueueFamilyIndices getQueueFamilies();
 
     protected:
-        explicit PhysicalDevice(Instance* instance, Surface* surface);
+        explicit PhysicalDevice(std::shared_ptr<Instance> i, Surface* surface);
 
     private:
 
@@ -41,8 +41,9 @@ namespace vkShmup {
         VkBool32 hasPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, Surface* surface, uint32_t queueFamilyIndex);
         bool isDeviceSuitable(VkPhysicalDevice device, QueueFamilyIndices indices, Surface* surface);
 
-        QueueFamilyIndices queueIndices;
+        std::shared_ptr<Instance> instance;
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+        QueueFamilyIndices queueIndices;
     };
 }
 

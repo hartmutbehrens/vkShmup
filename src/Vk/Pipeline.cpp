@@ -29,10 +29,10 @@ namespace vkShmup {
     }
 
     Pipeline::Pipeline(const char* name):
-    instance(Instance::create(name)),
-    vmAllocator(nullptr),
-    currentFrame(0),
-    framebufferResized(false) {
+            instance(Instance::create(name)),
+            vmAllocator(nullptr),
+            currentFrame(0),
+            framebufferResized(false) {
     }
 
     Pipeline::~Pipeline() {
@@ -59,7 +59,7 @@ namespace vkShmup {
 
     void Pipeline::initVulkan(GLFWwindow* window) {
         surface = instance->getSurface(window);
-        physicalDevice = PhysicalDevice::create(instance.get(), surface.get());
+        physicalDevice = instance->getPhysicalDevice(surface.get());
         createLogicalDevice();
         vmAllocator = VMAllocator::create(instance->handle(), physicalDevice->handle(), logicalDevice);
         createSwapChain(window);

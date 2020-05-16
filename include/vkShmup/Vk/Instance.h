@@ -12,6 +12,7 @@
 namespace vkShmup {
     extern const std::vector<const char*> validationLayers;
 
+    class PhysicalDevice;
     class Surface;
     class Instance: public std::enable_shared_from_this<Instance> {
     public:
@@ -29,6 +30,7 @@ namespace vkShmup {
                 void* pUserData);
         void destroyDebugUtilsMessengerEXT(const VkAllocationCallbacks* pAllocator);
         std::vector<VkPhysicalDevice> enumerate_physical_devices();
+        std::shared_ptr<PhysicalDevice> getPhysicalDevice(Surface* surface);
         std::vector<const char*> getRequiredExtensions();
         std::shared_ptr<Surface> getSurface(GLFWwindow* window);
 
@@ -39,7 +41,9 @@ namespace vkShmup {
 
     private:
         VkInstance instance;
+#ifndef NDEBUG
         VkDebugUtilsMessengerEXT debugMessenger;
+#endif
     };
 }
 

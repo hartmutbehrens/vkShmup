@@ -13,12 +13,12 @@ namespace vkShmup {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
 
-    std::unique_ptr<PhysicalDevice> PhysicalDevice::create(vkShmup::Instance *instance, Surface* surface) {
-        assert(instance != nullptr);
-        return std::unique_ptr<PhysicalDevice>(new PhysicalDevice(instance, surface));
+    std::shared_ptr<PhysicalDevice> PhysicalDevice::create(std::shared_ptr<Instance> i, Surface* surface) {
+        assert(i != nullptr);
+        return std::shared_ptr<PhysicalDevice>(new PhysicalDevice(i, surface));
     }
 
-    PhysicalDevice::PhysicalDevice(Instance* instance, Surface* surface)  {
+    PhysicalDevice::PhysicalDevice(std::shared_ptr<Instance> i, Surface* surface): instance(i)  {
         for (const auto& d : instance->enumerate_physical_devices()) {
             auto indices = findQueueFamilies(d, surface);
             if (isDeviceSuitable(d, indices, surface)) {

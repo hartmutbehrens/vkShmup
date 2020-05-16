@@ -25,7 +25,7 @@ namespace vkShmup {
         [[nodiscard]] const VkSurfaceKHR& handle() const { return surface; }
         ~Surface();
 
-        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device) const;
 
     protected:
         explicit Surface(std::shared_ptr<Instance> i, GLFWwindow* window);

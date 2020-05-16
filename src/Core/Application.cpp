@@ -12,7 +12,9 @@ namespace vkShmup {
     Application::Application(): Application("application") {
     }
 
-    Application::Application(const char* name): window(Window::create(name)), pipeline(Pipeline::create(name)) {
+    Application::Application(const char* name):
+            window(Window::create(name)),
+            pipeline(Pipeline::create(name)) {
         pipeline->initVulkan(window->handle());
         glfwSetWindowUserPointer(window->handle(), &pipeline);
         glfwSetFramebufferSizeCallback(window->handle(), framebufferResizeCallback);

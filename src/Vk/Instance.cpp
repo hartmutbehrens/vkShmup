@@ -2,6 +2,7 @@
 // Created by hartmut on 2020/05/05.
 //
 #include "vkShmup/Vk/Instance.h"
+#include "vkShmup/Vk/PhysicalDevice.h"
 #include "vkShmup/Vk/Surface.h"
 #include <iostream>
 #include <set>
@@ -115,6 +116,10 @@ namespace vkShmup {
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
         // https://stackoverflow.com/questions/15704565/efficient-way-to-return-a-stdvector-in-c
         return devices;
+    }
+
+    std::shared_ptr<PhysicalDevice> Instance::getPhysicalDevice(Surface *surface) {
+        return PhysicalDevice::create(shared_from_this(), surface);
     }
 
     std::vector<const char*> Instance::getRequiredExtensions() {
