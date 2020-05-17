@@ -51,10 +51,15 @@ make
 Execute the following in the build directory:
 ## Linux
 ```
+export VULKAN_SDK_PATH=</path/to/vulkan-sdk/x.y.z.w/x86_64>
 export LD_LIBRARY_PATH=$VULKAN_SDK_PATH/lib/
 # for debug builds also include the next export
 export VK_LAYER_PATH=/$VULKAN_SDK_PATH/etc/vulkan/explicit_layer.d
 ./vkShmup
+```
+If you would like to enable "best practice validation" then also set the following variable:
+```
+export VK_LAYER_ENABLES=VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT
 ```
 
 # Tracy
