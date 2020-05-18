@@ -9,15 +9,17 @@
 #include <vk_mem_alloc.h>
 
 namespace vkShmup {
+    class Device;
+
     class VMAllocator {
     public:
-        using unique_ptr = std::unique_ptr<VMAllocator>;
-        static unique_ptr create(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device);
+        static std::unique_ptr<VMAllocator> create(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device);
         [[nodiscard]] const VmaAllocator& handle() const { return allocator; }
         ~VMAllocator();
     protected:
         VMAllocator(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device);
     private:
+        // std::shared_ptr<Device> device;
         VmaAllocator allocator;
     };
 

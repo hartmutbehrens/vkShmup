@@ -8,14 +8,18 @@
 #include <vector>
 #include <memory>
 #include <vulkan/vulkan_core.h>
+#include <vk_mem_alloc.h>
 
 namespace vkShmup {
     extern const std::vector<const char*> validationLayers;
 
     class PhysicalDevice;
+    class VMAllocator;
+
     class Device {
     public:
         static std::shared_ptr<Device> create(std::shared_ptr<PhysicalDevice> p);
+        std::unique_ptr<VMAllocator> createVMAllocator();
         [[nodiscard]] const VkDevice& handle() const { return device; }
         [[nodiscard]] VkQueue& graphicsQueue() { return graphicsQ; }
         [[nodiscard]] VkQueue& presentQueue() { return presentQ; }
@@ -25,6 +29,7 @@ namespace vkShmup {
 
     private:
         std::shared_ptr<PhysicalDevice> physicalDevice;
+        std::unique_ptr<VMAllocator> allocator;
         VkDevice device;
 
         VkQueue graphicsQ;

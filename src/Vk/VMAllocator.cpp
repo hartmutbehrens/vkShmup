@@ -8,8 +8,8 @@
 
 
 namespace vkShmup {
-    VMAllocator::unique_ptr VMAllocator::create(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device) {
-        return VMAllocator::unique_ptr(new VMAllocator(instance, physicalDevice, device));
+    std::unique_ptr<VMAllocator> VMAllocator::create(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device) {
+        return std::unique_ptr<VMAllocator>(new VMAllocator(instance, physicalDevice, device));
     }
 
     VMAllocator::VMAllocator(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device)

@@ -38,6 +38,10 @@ namespace vkShmup {
         }
     }
 
+    const VkInstance & PhysicalDevice::instanceHandle() const {
+        return instance->handle();
+    }
+
     QueueFamilyIndices PhysicalDevice::getQueueFamilies() {
         return queueIndices;
     }

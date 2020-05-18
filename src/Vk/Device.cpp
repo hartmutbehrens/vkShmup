@@ -4,11 +4,16 @@
 #include <set>
 #include "vkShmup/Vk/PhysicalDevice.h"
 #include "vkShmup/Vk/Device.h"
+#include "vkShmup/Vk/VMAllocator.h"
 
 namespace vkShmup {
 
     std::shared_ptr<Device> Device::create(std::shared_ptr<PhysicalDevice> p){
         return std::shared_ptr<Device>(new Device(p));
+    }
+
+    std::unique_ptr<VMAllocator> Device::createVMAllocator() {
+        return VMAllocator::create(physicalDevice->instanceHandle(), physicalDevice->handle(), device);
     }
 
     Device::Device(std::shared_ptr<PhysicalDevice> p): physicalDevice(p) {
@@ -49,6 +54,8 @@ namespace vkShmup {
         }
         vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQ);
         vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQ);
+
+        allocator = VMAllocator::create(physicalDevice->instanceHandle(), physicalDevice->handle(), device);
     }
 
     Device::~Device() {

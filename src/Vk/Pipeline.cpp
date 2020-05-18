@@ -35,7 +35,6 @@ namespace vkShmup {
 
     Pipeline::Pipeline(const char* name):
             instance(Instance::create(name)),
-            vmAllocator(nullptr),
             currentFrame(0),
             framebufferResized(false) {
     }
@@ -44,10 +43,7 @@ namespace vkShmup {
         cleanupSwapChain();
         vmaDestroyBuffer(vmAllocator->handle(), indexBuffer, indexBufferMemory);
         vmaDestroyBuffer(vmAllocator->handle(), vertexBuffer, vertexBufferMemory);
-        // this must be called before the device is destroyed
-        // TODO: once all the resources are wrapped in smart pointers then this will
-        // TODO: naturally be taken care as a result of the destruction order
-        vmAllocator.reset();
+        vmAllocator.reset();  // this must be called before the device is destroyed
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(device->handle(), renderFinishedSemaphores[i], nullptr);
@@ -62,10 +58,10 @@ namespace vkShmup {
     }
 
     void Pipeline::initVulkan(GLFWwindow* window) {
-        surface = instance->getSurface(window);
+        surface = instance->createSurface(window);
         physicalDevice = instance->getPhysicalDevice(surface.get());
         device = physicalDevice->createDevice();
-        vmAllocator = VMAllocator::create(instance->handle(), physicalDevice->handle(), device->handle());
+        vmAllocator = device->createVMAllocator();
         createSwapChain(window);
         createImageViews();
         createRenderPass();

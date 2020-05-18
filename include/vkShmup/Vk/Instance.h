@@ -32,7 +32,7 @@ namespace vkShmup {
         std::vector<VkPhysicalDevice> enumerate_physical_devices();
         std::shared_ptr<PhysicalDevice> getPhysicalDevice(Surface* surface);
         static std::vector<const char*> getRequiredExtensions();
-        std::shared_ptr<Surface> getSurface(GLFWwindow* window);
+        std::shared_ptr<Surface> createSurface(GLFWwindow* window);
 
         void setupDebugMessenger();
 

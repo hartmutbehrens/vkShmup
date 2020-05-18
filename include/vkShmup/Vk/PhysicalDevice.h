@@ -30,6 +30,7 @@ namespace vkShmup {
         static std::shared_ptr<PhysicalDevice> create(std::shared_ptr<Instance> i, Surface* surface);
         std::shared_ptr<Device> createDevice();
         [[nodiscard]] const VkPhysicalDevice& handle() const { return physicalDevice; }
+        [[nodiscard]] const VkInstance& instanceHandle() const;
         ~PhysicalDevice() = default;
 
         QueueFamilyIndices getQueueFamilies();

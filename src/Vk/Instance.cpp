@@ -134,7 +134,7 @@ namespace vkShmup {
         return extensions;
     }
 
-    std::shared_ptr<Surface> Instance::getSurface(GLFWwindow *window) {
+    std::shared_ptr<Surface> Instance::createSurface(GLFWwindow *window) {
         return Surface::create(shared_from_this(), window);
     }
 

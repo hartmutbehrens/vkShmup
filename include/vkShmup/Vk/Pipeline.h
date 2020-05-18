@@ -88,7 +88,7 @@ namespace vkShmup {
         std::shared_ptr<Surface> surface;
         std::shared_ptr<PhysicalDevice> physicalDevice;
         std::shared_ptr<Device> device;
-        VMAllocator::unique_ptr vmAllocator;
+        std::unique_ptr<VMAllocator> vmAllocator;
 
         VkSwapchainKHR swapChain;
         std::vector<VkImage> swapChainImages;
