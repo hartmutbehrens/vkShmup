@@ -13,13 +13,13 @@ namespace vkShmup {
 
     class VMAllocator {
     public:
-        static std::unique_ptr<VMAllocator> create(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device);
+        static std::unique_ptr<VMAllocator> create(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, std::shared_ptr<Device> d);
         [[nodiscard]] const VmaAllocator& handle() const { return allocator; }
         ~VMAllocator();
     protected:
-        VMAllocator(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device);
+        VMAllocator(const VkInstance &instance, const VkPhysicalDevice& physicalDevice, std::shared_ptr<Device> d);
     private:
-        // std::shared_ptr<Device> device;
+        std::shared_ptr<Device> device;
         VmaAllocator allocator;
     };
 

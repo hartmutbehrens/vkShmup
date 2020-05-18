@@ -16,7 +16,7 @@ namespace vkShmup {
     class PhysicalDevice;
     class VMAllocator;
 
-    class Device {
+    class Device: public std::enable_shared_from_this<Device> {
     public:
         static std::shared_ptr<Device> create(std::shared_ptr<PhysicalDevice> p);
         std::unique_ptr<VMAllocator> createVMAllocator();
@@ -29,7 +29,6 @@ namespace vkShmup {
 
     private:
         std::shared_ptr<PhysicalDevice> physicalDevice;
-        std::unique_ptr<VMAllocator> allocator;
         VkDevice device;
 
         VkQueue graphicsQ;

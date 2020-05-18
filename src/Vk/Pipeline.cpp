@@ -43,7 +43,6 @@ namespace vkShmup {
         cleanupSwapChain();
         vmaDestroyBuffer(vmAllocator->handle(), indexBuffer, indexBufferMemory);
         vmaDestroyBuffer(vmAllocator->handle(), vertexBuffer, vertexBufferMemory);
-        vmAllocator.reset();  // this must be called before the device is destroyed
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(device->handle(), renderFinishedSemaphores[i], nullptr);
