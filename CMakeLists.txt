@@ -41,7 +41,7 @@ set(CMAKE_CXX_FLAGS_UBSAN
         FORCE)
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_ASAN}")
-add_compile_definitions(TRACY_ENABLE)
+# add_compile_definitions(TRACY_ENABLE)
 
 if (MSVC)
     # warning level 4 and all warnings as errors

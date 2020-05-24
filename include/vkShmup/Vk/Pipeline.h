@@ -12,6 +12,13 @@
 
 struct GLFWwindow;
 namespace vkShmup {
+    struct UniformBufferObject {
+        glm::mat4 model;
+        glm::mat4 view;
+        glm::mat4 proj;
+    };
+
+
     struct Vertex {
         glm::vec2 pos;
         glm::vec3 color;
@@ -56,16 +63,21 @@ namespace vkShmup {
         void createSwapChain(GLFWwindow* window);
         void createImageViews();
         void createRenderPass();
+        void createDescriptorSetLayout();
         void createGraphicsPipeline();
         void createFramebuffers();
         void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VmaAllocationCreateInfo allocInfo, VkBuffer& buffer, VmaAllocation& bufferMemory);
         void createVertexBuffer();
         void createIndexBuffer();
+        void createUniformBuffers();
+        void createDescriptorPool();
+        void createDescriptorSets();
         void createCommandPool();
         void createCommandBuffers();
         void createSyncObjects();
         const VkDevice& deviceHandle();
         void drawFrame(GLFWwindow* window);
+        void updateUniformBuffer(uint32_t currentImage);
         void cleanupSwapChain();
         void recreateSwapChain(GLFWwindow* window);
         void frameBufferResized();
@@ -97,6 +109,11 @@ namespace vkShmup {
         std::vector<VkImageView> swapChainImageViews;
         std::vector<VkFramebuffer> swapChainFramebuffers;
         VkRenderPass renderPass;
+
+        VkDescriptorSetLayout descriptorSetLayout;
+        VkDescriptorPool descriptorPool;
+        std::vector<VkDescriptorSet> descriptorSets;
+
         VkPipelineLayout pipelineLayout;
         VkPipeline graphicsPipeline;
 
@@ -104,6 +121,9 @@ namespace vkShmup {
         VmaAllocation vertexBufferMemory;
         VkBuffer indexBuffer;
         VmaAllocation indexBufferMemory;
+
+        std::vector<VkBuffer> uniformBuffers;
+        std::vector<VmaAllocation> uniformBuffersMemory;
 
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
