@@ -41,7 +41,9 @@ set(CMAKE_CXX_FLAGS_UBSAN
         FORCE)
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_ASAN}")
-# add_compile_definitions(TRACY_ENABLE)
+add_compile_definitions(TRACY_ENABLE)
+# single file public domain libraries - this project uses stb_image.h
+set(STB_INCLUDE_PATH stb)
 
 if (MSVC)
     # warning level 4 and all warnings as errors
@@ -72,13 +74,15 @@ add_library(Vk
         src/Vk/SyncObject.cpp
         src/Vk/VMAllocator.cpp)
 
-include_directories(include
+include_directories(
+        ${VULKAN_SDK_PATH}/include
+        ${STB_INCLUDE_PATH}
+        include
         VulkanMemoryAllocator/src)
 
 add_executable(vkShmup
         tracy/TracyClient.cpp
         src/main.cpp)
-link_directories(${VULKAN_SDK_PATH}/include)
 target_link_libraries(vkShmup Core Vk glfw vulkan)
 
 # TODO: this only works on Linux for now..
@@ -92,6 +96,12 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/GLSL ${CMAKE_CURRENT_BINARY_DIR}/GLSL
         COMMENT "Copying shaders" VERBATIM)
+
+add_custom_command(
+        TARGET vkShmup POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/textures ${CMAKE_CURRENT_BINARY_DIR}/textures
+        COMMENT "Copying textures" VERBATIM)
 
 
 # CppUTest

@@ -66,7 +66,7 @@ namespace vkShmup {
         void createDescriptorSetLayout();
         void createGraphicsPipeline();
         void createFramebuffers();
-        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VmaAllocationCreateInfo allocInfo, VkBuffer& buffer, VmaAllocation& bufferMemory);
+        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& bufferMemory);
         void createVertexBuffer();
         void createIndexBuffer();
         void createUniformBuffers();
@@ -75,6 +75,10 @@ namespace vkShmup {
         void createCommandPool();
         void createCommandBuffers();
         void createSyncObjects();
+        void createTextureImage();
+        void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VmaAllocation& imageMemory);
+        void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+        void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
         const VkDevice& deviceHandle();
         void drawFrame(GLFWwindow* window);
         void updateUniformBuffer(uint32_t currentImage);
@@ -88,6 +92,8 @@ namespace vkShmup {
         explicit Pipeline(const char* name);
 
     private:
+        VkCommandBuffer beginSingleTimeCommands();
+        void endSingleTimeCommands(VkCommandBuffer commandBuffer);
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
         static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -126,6 +132,10 @@ namespace vkShmup {
         std::vector<VmaAllocation> uniformBuffersMemory;
 
         VkCommandPool commandPool;
+
+        VkImage textureImage;
+        VmaAllocation textureImageMemory;
+
         std::vector<VkCommandBuffer> commandBuffers;
         std::vector<VkSemaphore> imageAvailableSemaphores;
         std::vector<VkSemaphore> renderFinishedSemaphores;
