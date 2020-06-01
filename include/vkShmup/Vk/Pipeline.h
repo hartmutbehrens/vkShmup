@@ -22,6 +22,7 @@ namespace vkShmup {
     struct Vertex {
         glm::vec2 pos;
         glm::vec3 color;
+        glm::vec2 texCoord;
 
         static VkVertexInputBindingDescription getBindingDescription() {
             VkVertexInputBindingDescription bindingDescription{};
@@ -32,8 +33,8 @@ namespace vkShmup {
             return bindingDescription;
         }
 
-        static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
-            std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+        static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
+            std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
             attributeDescriptions[0].binding = 0;
             attributeDescriptions[0].location = 0;
@@ -44,6 +45,11 @@ namespace vkShmup {
             attributeDescriptions[1].location = 1;
             attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
             attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+            attributeDescriptions[2].binding = 0;
+            attributeDescriptions[2].location = 2;
+            attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+            attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
 
             return attributeDescriptions;
         }
@@ -61,6 +67,7 @@ namespace vkShmup {
         static unique_ptr create(const char* name);
         void initVulkan(GLFWwindow* window);
         void createSwapChain(GLFWwindow* window);
+        VkImageView createImageView(VkImage image, VkFormat format);
         void createImageViews();
         void createRenderPass();
         void createDescriptorSetLayout();
@@ -76,6 +83,8 @@ namespace vkShmup {
         void createCommandBuffers();
         void createSyncObjects();
         void createTextureImage();
+        void createTextureImageView();
+        void createTextureSampler();
         void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VmaAllocation& imageMemory);
         void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
@@ -135,6 +144,9 @@ namespace vkShmup {
 
         VkImage textureImage;
         VmaAllocation textureImageMemory;
+
+        VkImageView textureImageView;
+        VkSampler textureSampler;
 
         std::vector<VkCommandBuffer> commandBuffers;
         std::vector<VkSemaphore> imageAvailableSemaphores;
